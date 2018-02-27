@@ -18,4 +18,8 @@
  *
  */
 
+use Encore\Admin\Form\Field\Address;
+use Encore\Admin\Form;
+Form::extend('address', Address::class);
+
 Encore\Admin\Form::forget(['map', 'editor']);

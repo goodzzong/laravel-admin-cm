@@ -9,6 +9,7 @@ use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 
+
 class HomeController extends Controller
 {
     public function index()
@@ -20,6 +21,9 @@ class HomeController extends Controller
 
             $content->row(Dashboard::title());
 
+
+
+            /*
             $content->row(function (Row $row) {
 
                 $row->column(4, function (Column $column) {
@@ -34,6 +38,7 @@ class HomeController extends Controller
                     $column->append(Dashboard::dependencies());
                 });
             });
+            */
         });
     }
 }

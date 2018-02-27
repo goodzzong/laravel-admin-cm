@@ -5,17 +5,17 @@ return [
     /*
      * Laravel-admin name.
      */
-    'name' => 'Laravel-admin',
+    'name' => 'sysmate',
 
     /*
      * Logo in admin panel header.
      */
-    'logo' => '<b>Laravel</b> admin',
+    'logo' => '<b>sysmate</b> admin',
 
     /*
      * Mini-logo in admin panel header.
      */
-    'logo-mini' => '<b>La</b>',
+    'logo-mini' => '<b>sys</b>',
 
     /*
      * Route configuration.
@@ -37,7 +37,7 @@ return [
     /*
      * Laravel-admin html title.
      */
-    'title' => 'Admin',
+    'title' => 'sysmate admin',
 
     /*
      * Use `https`.
@@ -151,6 +151,8 @@ return [
      * Settings for extensions.
      */
     'extensions' => [
-
+        'media-manager' => [
+            'disk' => 'public'   // Points to the disk set in config/filesystem.php
+        ],
     ],
 ];
