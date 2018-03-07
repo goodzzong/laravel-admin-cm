@@ -27,6 +27,7 @@ class CreateCustomersTable extends Migration
             $table->string('address2')->nullable()->comment('상세주소');
             $table->string('extra_info')->nullable()->comment('참고사항');
             $table->string('email')->comment('이메일 (로그인에 사용됨)');
+            $table->string('manager')->nullable()->comment('사내담당자');
             $table->text('memo')->comment('메모');
             $table->text('contents')->comment('요구사항');
             $table->string('picture','255');

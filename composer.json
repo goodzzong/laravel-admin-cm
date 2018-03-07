@@ -10,7 +10,7 @@
         "fideloper/proxy": "~3.3",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "meshkorea/laravel-postcodify": "^0.1.1",
+        "maatwebsite/excel": "~2.1.0",
         "spatie/eloquent-sortable": "^3.4"
     },
     "require-dev": {

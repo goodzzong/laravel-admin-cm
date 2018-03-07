@@ -5,6 +5,7 @@ namespace App;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
@@ -20,6 +21,87 @@ class Customer extends Model implements Sortable
         'order_column_name' => 'rank',
         'sort_when_creating' => true,
     ];
+
+
+    public function scopeImportance($query, $importance)
+    {
+        if (!in_array($importance, ['1', '2', '3'])) {
+            return $query;
+        }
+
+        return $query->where('importance', $importance);
+    }
+
+    public function scopeCategoryId($query, $category)
+    {
+        if (!isset($category)) {
+            return $query;
+        }
+
+        if ($category == 0) {
+            return $query->where('category_id', '!=', '');
+        } else {
+            $kinds = $this->getCategoryId('parent_id', $category);
+            return $query->whereIn('category_id', $kinds);
+        }
+
+
+    }
+
+    public function getCategoryId($column, $category)
+    {
+        $kinds = [];
+        $checkCount = $this->getCategoryCheckCount($column, $category);
+
+        if ($checkCount > 0) {
+            $categoryChecks = $this->getCategoryCheck($column, $category);
+
+            foreach ($categoryChecks as $categoryCheck) {
+                //echo $categoryCheck->title;
+
+                $checkCount2 = $this->getCategoryCheckCount($column, $categoryCheck->id);
+
+                if ($checkCount2 > 0) {
+                    $categoryChecks2 = $this->getCategoryCheck($column, $categoryCheck->id);
+
+                    foreach ($categoryChecks2 as $categoryCheck2) {
+
+                        $checkCount3 = $this->getCategoryCheckCount($column, $categoryCheck2->id);
+
+                        if ($checkCount3 > 0) {
+
+                        } else {
+                            $kinds[] = $categoryCheck2->id;
+                        }
+
+                    }
+
+                } else {
+                    $kinds[] = $categoryCheck->id;
+                }
+
+            }
+
+        } else {
+            $kinds[] = $category;
+        }
+
+        return $kinds;
+    }
+
+    public function getCategoryCheck($column, $category)
+    {
+        $categoryChecks = DB::table('admin_categories')->where($column, $category)->get();
+
+        return $categoryChecks;
+    }
+
+    public function getCategoryCheckCount($column, $category)
+    {
+        $checkCount = DB::table('admin_categories')->where($column, $category)->count();
+
+        return $checkCount;
+    }
 
     public function getAttachFilesAttribute($attach_files)
     {

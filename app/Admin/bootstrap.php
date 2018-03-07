@@ -20,6 +20,16 @@
 
 use Encore\Admin\Form\Field\Address;
 use Encore\Admin\Form;
+use Encore\Admin\Facades\Admin;
+
 Form::extend('address', Address::class);
 
 Encore\Admin\Form::forget(['map', 'editor']);
+
+
+
+Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
+
+    //$navbar->left(view('search-bar'));
+
+});
