@@ -19,12 +19,18 @@
  */
 
 use Encore\Admin\Form\Field\Address;
+use App\Admin\Extensions\Form\CKEditor;
 use Encore\Admin\Form;
 use Encore\Admin\Facades\Admin;
 
-Form::extend('address', Address::class);
+//use Encore\Admin\Form\Field\CKEditor;
 
-Encore\Admin\Form::forget(['map', 'editor']);
+Form::extend('ckeditor', CKEditor::class);
+Form::extend('address', Address::class);
+Admin::js('/vendor/chartjs/dist/Chart.min.js');
+
+
+//Encore\Admin\Form::forget(['map', 'editor']);
 
 
 

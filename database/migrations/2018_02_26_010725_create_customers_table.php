@@ -15,23 +15,29 @@ class CreateCustomersTable extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('category_id')->index()->comment('카테고리 ID');
+            $table->unsignedInteger('user_id')->index()->comment('회원 ID');
+            $table->unsignedInteger('category_customer_id')->index()->comment('카테고리(고객사분류) ID');
+            $table->unsignedInteger('category_sales_id')->index()->comment('카테고리(영업분류) ID');
+            $table->unsignedInteger('category_delivery_id')->index()->comment('카테고리(납품분류) ID');
+            $table->string('manager')->nullable()->comment('영업담당자');
+            $table->enum('importance',['1','2','3','4','5'])->defalut(1)->comment('고객중요도');
+
+            $table->string('company')->comment('회사');
             $table->string('name')->comment('성명');
             $table->string('rank')->comment('직급');
-            $table->string('company')->comment('회사명');
             $table->string('main_phone', 20)->nullable()->comment('대표전화');
             $table->string('phone_number', 20)->nullable()->comment('휴대폰');
             $table->string('fax_number', 20)->nullable()->comment('팩스');
+            $table->string('email')->comment('이메일');
+
             $table->string('zipcode', 10)->nullable()->comment('우편번호');
             $table->string('address1')->nullable()->comment('주소');
             $table->string('address2')->nullable()->comment('상세주소');
             $table->string('extra_info')->nullable()->comment('참고사항');
-            $table->string('email')->comment('이메일 (로그인에 사용됨)');
-            $table->string('manager')->nullable()->comment('사내담당자');
-            $table->text('memo')->comment('메모');
-            $table->text('contents')->comment('요구사항');
+
+            $table->text('contents')->comment('특이사항');
             $table->string('picture','255');
-            $table->text('attach_files')->comment('관련자료');
+            $table->text('attach_files')->comment('첨부파일');
             $table->timestamps();
             $table->softDeletes();
         });

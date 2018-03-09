@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,10 +23,26 @@ class Customer extends Model implements Sortable
         'sort_when_creating' => true,
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Administrator::class);
+    }
+
+    public function scopeUserId($query, $user)
+    {
+        //eturn $this->belongsTo(Administrator::class);
+
+        return $query->where('user_id', $user->id);
+    }
 
     public function scopeImportance($query, $importance)
     {
-        if (!in_array($importance, ['1', '2', '3'])) {
+        if (!in_array($importance, ['1', '2', '3', '4', '5'])) {
             return $query;
         }
 
@@ -39,10 +56,10 @@ class Customer extends Model implements Sortable
         }
 
         if ($category == 0) {
-            return $query->where('category_id', '!=', '');
+            return $query->where('category_customer_id', '!=', '');
         } else {
             $kinds = $this->getCategoryId('parent_id', $category);
-            return $query->whereIn('category_id', $kinds);
+            return $query->whereIn('category_customer_id', $kinds);
         }
 
 

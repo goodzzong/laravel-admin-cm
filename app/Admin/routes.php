@@ -14,8 +14,9 @@ Route::group([
 
     $router->resources([
 
-        'categories'            => CategoryController::class,
+        'categories'           => CategoryController::class,
         'customers'            => CustomerController::class,
+        'notices'              => NoticeController::class,
 
     ]);
 
