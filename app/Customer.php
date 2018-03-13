@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Encore\Admin\Admin;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -25,12 +26,12 @@ class Customer extends Model implements Sortable
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(\App\Category::class);
     }
 
     public function user()
     {
-        return $this->belongsTo(Administrator::class);
+        return $this->belongsTo(Admin::class);
     }
 
     public function scopeUserId($query, $user)

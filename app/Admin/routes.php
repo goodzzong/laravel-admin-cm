@@ -21,5 +21,6 @@ Route::group([
     ]);
 
     $router->get('/', 'HomeController@index');
+    $router->get('customer/detail/{customerId}', 'CustomerController@detail')->name('customer.detail');
 
 });

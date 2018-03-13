@@ -14,7 +14,7 @@ class Category extends Model
 
     public function customers()
     {
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(\App\Customer::class);
     }
 
     public function scopeParentId()

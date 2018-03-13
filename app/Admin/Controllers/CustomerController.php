@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\action\CheckRow;
 use App\Admin\Extensions\Tools\CustomerCategory;
 use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
@@ -36,6 +37,20 @@ class CustomerController extends Controller
         });
     }
 
+    public function detail($customerId)
+    {
+        $customer = \App\Customer::find($customerId);
+        $category_customer = Category::find($customer->category_customer_id);
+        $category_sales = Category::find($customer->category_sales_id);
+        $category_delivery = Category::find($customer->category_delivery_id);
+        return view('admin::customer.detail', [
+            'customer' => $customer,
+            'category_customer' => $category_customer,
+            'category_sales' => $category_sales,
+            'category_delivery' => $category_delivery
+        ]);
+    }
+
     public function edit($id)
     {
         return Admin::content(function (Content $content) use ($id) {
@@ -62,12 +77,12 @@ class CustomerController extends Controller
 
     protected function grid()
     {
+
         return Admin::grid(Customer::class, function (Grid $grid) {
 
             //$grid->model()->userId(Admin::user());
             $grid->model()->categoryId(Request::get('category'));
             $grid->model()->importance(Request::get('importance'));
-
 
             $grid->paginate(10);
             //$grid->id('ID')->sortable();
@@ -76,12 +91,12 @@ class CustomerController extends Controller
                 return Category::find($category_customer_id)->title;
             });
 
-            $grid->category_sales_id('영업분류')->display(function ($category_customer_id) {
-                return Category::find($category_customer_id)->title;
+            $grid->category_sales_id('영업분류')->display(function ($category_sales_id) {
+                return Category::find($category_sales_id)->title;
             });
 
-            $grid->category_delivery_id('납품분류')->display(function ($category_customer_id) {
-                return Category::find($category_customer_id)->title;
+            $grid->category_delivery_id('납품분류')->display(function ($category_delivery_id) {
+                return Category::find($category_delivery_id)->title;
             });
 
             $grid->manager('영업담당자')->sortable();
@@ -101,6 +116,15 @@ class CustomerController extends Controller
             $grid->email()->sortable();
 
 
+            $grid->actions(function ($actions) {
+
+//                if (!Admin::user()->can('admin.customer.update') || Admin::user()->id != $actions->row['user_id']) {
+//                    $actions->disableDelete();
+//                }
+                $actions->disableDelete();
+                $actions->append(new CheckRow($actions->getKey()));
+
+            });
 
 //            $grid->zipcode('우편번호');
 //            $grid->column('full_name', '주소')->display(function () {
@@ -204,13 +228,13 @@ class CustomerController extends Controller
 
             $form->mobile('main_phone', '대표전화')
                 ->placeholder('대표전화')
-                ->options(['mask' => '999 9999 9999'])->rules('nullable');
+                ->rules('nullable');
             $form->mobile('phone_number', '휴대폰')
                 ->placeholder('휴대폰')
                 ->options(['mask' => '999 9999 9999'])->rules('nullable');
             $form->mobile('fax_number', '팩스')
                 ->placeholder('팩스')
-                ->options(['mask' => '999 9999 9999'])->rules('nullable');
+                ->rules('nullable');
 
             $form->email('email', '이메일')
                 ->setWidth('5')
@@ -234,9 +258,7 @@ class CustomerController extends Controller
                 ->attribute(['class' => 'postcodify_details form-control'])->rules('nullable');
 
 
-
             $form->divide();
-
 
 
             $form->textarea('contents', '특이사항')
