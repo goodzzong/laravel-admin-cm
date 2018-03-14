@@ -8,6 +8,7 @@ use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
 use App\Customer;
 
+use App\Sale;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -15,6 +16,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -39,15 +41,19 @@ class CustomerController extends Controller
 
     public function detail($customerId)
     {
-        $customer = \App\Customer::find($customerId);
+        $customer = Customer::find($customerId);
         $category_customer = Category::find($customer->category_customer_id);
         $category_sales = Category::find($customer->category_sales_id);
         $category_delivery = Category::find($customer->category_delivery_id);
+        $sales = Sale::where('customer_id', $customerId)->get();
+        $salesResultPrice = Sale::where('customer_id', $customerId)->sum('price');
         return view('admin::customer.detail', [
             'customer' => $customer,
             'category_customer' => $category_customer,
             'category_sales' => $category_sales,
-            'category_delivery' => $category_delivery
+            'category_delivery' => $category_delivery,
+            'sales' => $sales,
+            'salesResultPrice' => $salesResultPrice,
         ]);
     }
 
@@ -81,7 +87,8 @@ class CustomerController extends Controller
         return Admin::grid(Customer::class, function (Grid $grid) {
 
             //$grid->model()->userId(Admin::user());
-            $grid->model()->categoryId(Request::get('category'));
+            $grid->model()->categoryCustomerId(Request::get('category'));
+            //$grid->model()->categoryCustomerId(Request::get('category_customer_id'));
             $grid->model()->importance(Request::get('importance'));
 
             $grid->paginate(10);
@@ -141,6 +148,12 @@ class CustomerController extends Controller
 
             $grid->filter(function (Grid\Filter $filter) {
 
+
+                //$filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
+                //$filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
+                //$filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
+
+
                 $filter->like('company', '회사명');
                 $filter->like('name', '성명');
                 $filter->like('email', '이메일');
@@ -171,105 +184,122 @@ class CustomerController extends Controller
 
         return Admin::form(Customer::class, function (Form $form) {
 
-            //$form->display('id', 'ID');
-            $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
-            $form->hidden('user_id')->value(Admin::user()->id);
-
-            $form->select('category_customer_id', '고객사분류')->options(Category::selectOptionsIns(1))->rules('required', [
-                'required' => '그룹을 선택해 주세요.',
-            ]);
-            /*
-            $form->select('category_customer_id', '고객사분류')->options(
-                Category::parentId()->pluck('title', 'id')
-            )->setWidth(2);*/
+            $form->tab('기본정보', function (Form $form) {
 
 
-            $form->select('category_sales_id', '영업분류')->options(Category::selectOptionsIns(2))->rules('required', [
-                'required' => '그룹을 선택해 주세요.',
-            ]);
+                $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
+                $form->hidden('user_id')->value(Admin::user()->id);
 
-            $form->select('category_delivery_id', '납품분류')->options(Category::selectOptionsIns(3))->rules('required', [
-                'required' => '그룹을 선택해 주세요.',
-            ]);
-
-            $form->text('manager', '영업담당자')
-                ->placeholder('담당자명을 입력해 주세요.')
-                ->setWidth(2)
-                ->rules('required', [
-                    'required' => '담당자명을 입력해 주세요.',
+                $form->select('category_customer_id', '고객사분류')->options(Category::selectOptionsIns(1))->rules('required', [
+                    'required' => '그룹을 선택해 주세요.',
                 ]);
 
-            $form->radio('importance', '고객 중요도')->options([
-                1 => '★',
-                2 => '★★',
-                3 => '★★★',
-                4 => '★★★★',
-                5 => '★★★★★',
-            ])->stacked()->rules('nullable');
-
-            $form->divide();
+//            $form->select('category_customer_id', '고객사분류')->options(
+//                Category::parentId()->pluck('title', 'id')
+//            )->setWidth(2);
 
 
-            $form->text('company', '회사')
-                ->placeholder('회사명을 입력해 주세요.')
-                ->setWidth(5)->rules('nullable');
-
-            $form->text('name', '성명')
-                ->placeholder('성명을 입력해 주세요.')
-                ->setWidth(2)
-                ->rules('required', [
-                    'required' => '성명을 입력해 주세요.',
+                $form->select('category_sales_id', '영업분류')->options(Category::selectOptionsIns(2))->rules('required', [
+                    'required' => '그룹을 선택해 주세요.',
                 ]);
 
-            $form->text('rank', '직급')
-                ->placeholder('직급을 입력해 주세요.')
-                ->setWidth(5)->rules('nullable');
-
-
-            $form->mobile('main_phone', '대표전화')
-                ->placeholder('대표전화')
-                ->rules('nullable');
-            $form->mobile('phone_number', '휴대폰')
-                ->placeholder('휴대폰')
-                ->options(['mask' => '999 9999 9999'])->rules('nullable');
-            $form->mobile('fax_number', '팩스')
-                ->placeholder('팩스')
-                ->rules('nullable');
-
-            $form->email('email', '이메일')
-                ->setWidth('5')
-                ->placeholder('이메일을 입력해 주세요.')
-                ->rules('required|email', [
-                    'required' => '이메일을 입력해 주세요.',
-                    'email' => '이메일 형식으로 입력해 주세요.',
+                $form->select('category_delivery_id', '납품분류')->options(Category::selectOptionsIns(3))->rules('required', [
+                    'required' => '그룹을 선택해 주세요.',
                 ]);
 
-            $form->address('zipcode', '우편번호')
-                ->setWidth('2')
-                ->placeholder('우편번호')
-                ->attribute(['class' => 'postcodify_postcode5 form-control'])->rules('nullable');
+                $form->text('manager', '영업담당자')
+                    ->placeholder('담당자명을 입력해 주세요.')
+                    ->setWidth(2)
+                    ->rules('required', [
+                        'required' => '담당자명을 입력해 주세요.',
+                    ]);
 
-            $form->text('address1', '주소')
-                ->placeholder('주소')
-                ->attribute(['class' => 'postcodify_address form-control'])->rules('nullable');
+                $form->radio('importance', '고객 중요도')->options([
+                    1 => '★',
+                    2 => '★★',
+                    3 => '★★★',
+                    4 => '★★★★',
+                    5 => '★★★★★',
+                ])->stacked()->rules('nullable');
 
-            $form->text('address2', '상세주소')
-                ->placeholder('상세주소를 입력해 주세요.')
-                ->attribute(['class' => 'postcodify_details form-control'])->rules('nullable');
+                $form->divide();
 
 
-            $form->divide();
+                $form->text('company', '회사')
+                    ->placeholder('회사명을 입력해 주세요.')
+                    ->setWidth(5)->rules('nullable');
+
+                $form->text('name', '성명')
+                    ->placeholder('성명을 입력해 주세요.')
+                    ->setWidth(2)
+                    ->rules('required', [
+                        'required' => '성명을 입력해 주세요.',
+                    ]);
+
+                $form->text('rank', '직급')
+                    ->placeholder('직급을 입력해 주세요.')
+                    ->setWidth(5)->rules('nullable');
 
 
-            $form->textarea('contents', '특이사항')
-                ->placeholder('특이사항을 입력해 주세요.')->rules('nullable');
+                $form->mobile('main_phone', '대표전화')
+                    ->placeholder('대표전화')
+                    ->rules('nullable');
+                $form->mobile('phone_number', '휴대폰')
+                    ->placeholder('휴대폰')
+                    ->options(['mask' => '999 9999 9999'])->rules('nullable');
+                $form->mobile('fax_number', '팩스')
+                    ->placeholder('팩스')
+                    ->rules('nullable');
 
-            $form->image('picture', '명함이미지')->removable()->rules('nullable');
+                $form->email('email', '이메일')
+                    ->setWidth('5')
+                    ->placeholder('이메일을 입력해 주세요.')
+                    ->rules('required|email', [
+                        'required' => '이메일을 입력해 주세요.',
+                        'email' => '이메일 형식으로 입력해 주세요.',
+                    ]);
 
-            $form->multipleFile('attach_files', '첨부파일')->rules('nullable')->removable();
+                $form->address('zipcode', '우편번호')
+                    ->setWidth('2')
+                    ->placeholder('우편번호')
+                    ->attribute(['class' => 'postcodify_postcode5 form-control'])->rules('nullable');
 
-//            $form->display('created_at', '등록일');
-//            $form->display('updated_at', '수정일');
+                $form->text('address1', '주소')
+                    ->placeholder('주소')
+                    ->attribute(['class' => 'postcodify_address form-control'])->rules('nullable');
+
+                $form->text('address2', '상세주소')
+                    ->placeholder('상세주소를 입력해 주세요.')
+                    ->attribute(['class' => 'postcodify_details form-control'])->rules('nullable');
+
+
+                $form->divide();
+
+
+                $form->textarea('contents', '특이사항')
+                    ->placeholder('특이사항을 입력해 주세요.')->rules('nullable');
+
+                $form->image('picture', '명함이미지')->removable()->rules('nullable');
+
+                $form->multipleFile('attach_files', '첨부파일')->rules('nullable')->removable();
+
+            })->tab('매출정보', function (Form $form) {
+
+                // $form->hidden('customer_id')->value(Admin::user()->id);
+                $form->hasMany('sales', '매출정보입력', function (Form\NestedForm $form) {
+                    $form->text('placeOfDelivery', '납품장소')
+                        ->placeholder('납품장소를 입력해 주세요.');
+                    $form->currency('price', '매출금액')
+                        ->symbol('₩')
+                        ->placeholder('매출금액을 입력해 주세요.');
+                    $form->datetime('sales_at', '매출발생일자');
+
+
+                });
+
+
+            });
+
         });
 
     }

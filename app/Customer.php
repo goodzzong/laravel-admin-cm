@@ -50,7 +50,7 @@ class Customer extends Model implements Sortable
         return $query->where('importance', $importance);
     }
 
-    public function scopeCategoryId($query, $category)
+    public function scopeCategoryCustomerId($query, $category)
     {
         if (!isset($category)) {
             return $query;
@@ -62,8 +62,6 @@ class Customer extends Model implements Sortable
             $kinds = $this->getCategoryId('parent_id', $category);
             return $query->whereIn('category_customer_id', $kinds);
         }
-
-
     }
 
     public function getCategoryId($column, $category)
@@ -135,6 +133,11 @@ class Customer extends Model implements Sortable
         if (is_array($attach_files)) {
             $this->attributes['attach_files'] = json_encode($attach_files);
         }
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
     }
 
 }

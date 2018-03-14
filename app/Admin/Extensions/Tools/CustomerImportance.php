@@ -31,9 +31,11 @@ EOT;
 
         $options = [
             'all'   => 'All',
-            '1'     => '상',
-            '2'     => '중',
-            '3'     => '하',
+            '5'     => '★★★★★',
+            '4'     => '★★★★',
+            '3'     => '★★★',
+            '2'     => '★★',
+            '1'     => '★',
         ];
 
         return view('admin.tools.importance', compact('options'));
