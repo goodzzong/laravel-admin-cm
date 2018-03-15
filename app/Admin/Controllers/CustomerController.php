@@ -3,20 +3,20 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\action\CheckRow;
-use App\Admin\Extensions\Tools\CustomerCategory;
+use App\Admin\Extensions\search\CustomerList;
 use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
 use App\Customer;
-
 use App\Sale;
+use Encore\Admin\Controllers\Search;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
+use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
-
-use Illuminate\Support\Facades\DB;
+use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -27,7 +27,6 @@ class CustomerController extends Controller
 
     public function index()
     {
-
         //echo Admin::user();
 
         return Admin::content(function (Content $content) {
@@ -35,9 +34,20 @@ class CustomerController extends Controller
             $content->header('고객관리');
             $content->description('리스트');
 
+            $content->row(function (Row $row) {
+
+                $row->column(12, function (Column $column) {
+                    $column->append(CustomerList::search());
+                });
+
+            });
+
             $content->body($this->grid());
+
+
         });
     }
+
 
     public function detail($customerId)
     {
@@ -87,13 +97,13 @@ class CustomerController extends Controller
         return Admin::grid(Customer::class, function (Grid $grid) {
 
             //$grid->model()->userId(Admin::user());
-            $grid->model()->categoryCustomerId(Request::get('category'));
-            //$grid->model()->categoryCustomerId(Request::get('category_customer_id'));
+            $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
+            $grid->model()->categorySalesId(Request::get('categorySales'));
+            $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
+
+
             $grid->model()->importance(Request::get('importance'));
-
             $grid->paginate(10);
-            //$grid->id('ID')->sortable();
-
             $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
                 return Category::find($category_customer_id)->title;
             });
@@ -117,9 +127,6 @@ class CustomerController extends Controller
             $grid->company('회사명')->sortable();
             $grid->name('성명')->sortable();
             $grid->main_phone('대표전화')->sortable();
-//            $grid->phone_number('휴대폰')->sortable();
-//            $grid->fax_number('팩스')->sortable();
-
             $grid->email()->sortable();
 
 
@@ -133,48 +140,35 @@ class CustomerController extends Controller
 
             });
 
-//            $grid->zipcode('우편번호');
-//            $grid->column('full_name', '주소')->display(function () {
-//                return $this->address1 . ' ' . $this->address2;
-//            });
             $grid->created_at('등록일')->sortable();
-//            $grid->updated_at('수정일')->sortable();
-
-
             $grid->tools(function ($tools) {
+
                 $tools->append(new CustomerImportance());
-                $tools->append(new CustomerCategory());
+                //$tools->append(new CustomerCategory());
             });
 
-            $grid->filter(function (Grid\Filter $filter) {
-
-
-                //$filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
-                //$filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
-                //$filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
-
-
-                $filter->like('company', '회사명');
-                $filter->like('name', '성명');
-                $filter->like('email', '이메일');
-                $filter->like('manager', '담당자');
-
-
-                $filter->where(function ($query) {
-
-                    $query->where('address1', 'like', "%{$this->input}%")
-                        ->orWhere('address2', 'like', "%{$this->input}%");
-
-                }, '주소');
-
-                $filter->between('created_at', '등록일')->datetime();
-//                $filter->between('updated_at', '수정일')->datetime();
-
-            });
-
+//            $grid->filter(function (Grid\Filter $filter) {
+//                $filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
+//                $filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
+//                $filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
+//                $filter->like('company', '회사명');
+//                $filter->like('name', '성명');
+//                $filter->like('email', '이메일');
+//                $filter->like('manager', '담당자');
+//
+//
+//                $filter->where(function ($query) {
+//
+//                    $query->where('address1', 'like', "%{$this->input}%")
+//                        ->orWhere('address2', 'like', "%{$this->input}%");
+//
+//                }, '주소');
+//
+//                $filter->between('created_at', '등록일')->datetime();
+//
+//            });
 
             //$grid->exporter(new ExcelExpoter());
-
         });
     }
 

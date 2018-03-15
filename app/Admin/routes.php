@@ -1,7 +1,4 @@
 <?php
-
-
-
 use Illuminate\Routing\Router;
 
 Admin::registerAuthRoutes();

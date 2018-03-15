@@ -3,7 +3,7 @@
 namespace App;
 
 use Encore\Admin\Admin;
-use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Grid;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,6 +34,11 @@ class Customer extends Model implements Sortable
         return $this->belongsTo(Admin::class);
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
     public function scopeUserId($query, $user)
     {
         //eturn $this->belongsTo(Administrator::class);
@@ -61,6 +66,34 @@ class Customer extends Model implements Sortable
         } else {
             $kinds = $this->getCategoryId('parent_id', $category);
             return $query->whereIn('category_customer_id', $kinds);
+        }
+    }
+
+    public function scopeCategorySalesId($query, $category)
+    {
+        if (!isset($category)) {
+            return $query;
+        }
+
+        if ($category == 0) {
+            return $query->where('category_sales_id', '!=', '');
+        } else {
+            $kinds = $this->getCategoryId('parent_id', $category);
+            return $query->whereIn('category_sales_id', $kinds);
+        }
+    }
+
+    public function scopeCategoryDeliveryId($query, $category)
+    {
+        if (!isset($category)) {
+            return $query;
+        }
+
+        if ($category == 0) {
+            return $query->where('category_delivery_id', '!=', '');
+        } else {
+            $kinds = $this->getCategoryId('parent_id', $category);
+            return $query->whereIn('category_delivery_id', $kinds);
         }
     }
 
@@ -135,9 +168,7 @@ class Customer extends Model implements Sortable
         }
     }
 
-    public function sales()
-    {
-        return $this->hasMany(Sale::class);
-    }
+
+
 
 }
