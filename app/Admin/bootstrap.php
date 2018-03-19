@@ -28,8 +28,10 @@ use Encore\Admin\Facades\Admin;
 Form::extend('ckeditor', CKEditor::class);
 Form::extend('address', Address::class);
 //Admin::js('/vendor/chartjs/dist/Chart.min.js');
+Admin::js('/vendor/chartjs/dist/Chart.bundle.js');
+Admin::js('/vendor/chartjs/samples/utils.js');
 
-Encore\Admin\Form::forget(['map', 'editor']);
+//Encore\Admin\Form::forget(['map', 'editor']);
 
 
 

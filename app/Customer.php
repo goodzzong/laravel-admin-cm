@@ -2,8 +2,7 @@
 
 namespace App;
 
-use Encore\Admin\Admin;
-use Encore\Admin\Grid;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,7 +30,7 @@ class Customer extends Model implements Sortable
 
     public function user()
     {
-        return $this->belongsTo(Admin::class);
+        return $this->belongsTo(Administrator::class);
     }
 
     public function sales()
@@ -44,6 +43,11 @@ class Customer extends Model implements Sortable
         //eturn $this->belongsTo(Administrator::class);
 
         return $query->where('user_id', $user->id);
+    }
+
+    public function scopeTotals($query)
+    {
+        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->get();
     }
 
     public function scopeImportance($query, $importance)

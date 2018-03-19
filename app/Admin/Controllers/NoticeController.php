@@ -139,9 +139,7 @@ class NoticeController extends Controller
             ])->placeholder('제목을 입력해 주세요.');
 
             //$form->ckeditor('content');
-            $form->editor('content', '내용')->rules('required', [
-                'required' => '내용을 입력해 주세요.',
-            ]);
+            $form->editor('content', '내용');
 //            $form->textarea('content', '내용')->rules('required', [
 //                'required' => '내용을 입력해 주세요.',
 //            ]);

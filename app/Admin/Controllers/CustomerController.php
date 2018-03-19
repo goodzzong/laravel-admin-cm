@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\action\CheckRow;
+use App\Admin\Extensions\ExcelExpoter;
 use App\Admin\Extensions\search\CustomerList;
 use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
@@ -97,6 +98,7 @@ class CustomerController extends Controller
         return Admin::grid(Customer::class, function (Grid $grid) {
 
             //$grid->model()->userId(Admin::user());
+            $grid->model()->orderBy('id', 'desc');
             $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
             $grid->model()->categorySalesId(Request::get('categorySales'));
             $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
@@ -168,7 +170,7 @@ class CustomerController extends Controller
 //
 //            });
 
-            //$grid->exporter(new ExcelExpoter());
+            $grid->exporter(new ExcelExpoter());
         });
     }
 
@@ -235,13 +237,15 @@ class CustomerController extends Controller
                     ->setWidth(5)->rules('nullable');
 
 
-                $form->mobile('main_phone', '대표전화')
+                $form->text('main_phone', '대표전화')
+                    ->setWidth('2')
                     ->placeholder('대표전화')
                     ->rules('nullable');
                 $form->mobile('phone_number', '휴대폰')
                     ->placeholder('휴대폰')
                     ->options(['mask' => '999 9999 9999'])->rules('nullable');
-                $form->mobile('fax_number', '팩스')
+                $form->text('fax_number', '팩스')
+                    ->setWidth('2')
                     ->placeholder('팩스')
                     ->rules('nullable');
 
@@ -286,7 +290,8 @@ class CustomerController extends Controller
                     $form->currency('price', '매출금액')
                         ->symbol('₩')
                         ->placeholder('매출금액을 입력해 주세요.');
-                    $form->datetime('sales_at', '매출발생일자');
+                    $form->datetime('sales_at', '매출발생일자')
+                        ->placeholder('날짜입력');
 
 
                 });

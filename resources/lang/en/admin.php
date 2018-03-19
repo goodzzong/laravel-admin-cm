@@ -15,6 +15,7 @@ return [
 
     'list'         => '목록',
     'new'          => '등록',
+    'tabNew'          => '추가',
     'create'       => '등록',
     'delete'       => '삭제',
     'remove'       => 'Remove',
