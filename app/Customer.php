@@ -47,7 +47,7 @@ class Customer extends Model implements Sortable
 
     public function scopeTotals($query)
     {
-        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->get();
+        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->orderBy('total','desc')->get();
     }
 
     public function scopeImportance($query, $importance)

@@ -65,7 +65,7 @@
   <tr>
     <th class="text-center" style="background-color: #f1f1f1">영업담당자</th>
     <td>
-      <input type="text" class="form-control manager" placeholder="담당자" name="manager" value="">
+      <input type="text" class="form-control manager" placeholder="담당자" name="manager" value="{{ old('manager') }}">
     </td>
     <th class="text-center" style="background-color: #f1f1f1">등록일</th>
     <td>

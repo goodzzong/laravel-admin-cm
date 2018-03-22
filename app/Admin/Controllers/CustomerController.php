@@ -103,7 +103,6 @@ class CustomerController extends Controller
             $grid->model()->categorySalesId(Request::get('categorySales'));
             $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
 
-
             $grid->model()->importance(Request::get('importance'));
             $grid->paginate(10);
             $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
@@ -149,26 +148,26 @@ class CustomerController extends Controller
                 //$tools->append(new CustomerCategory());
             });
 
-//            $grid->filter(function (Grid\Filter $filter) {
-//                $filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
-//                $filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
-//                $filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
-//                $filter->like('company', '회사명');
-//                $filter->like('name', '성명');
-//                $filter->like('email', '이메일');
-//                $filter->like('manager', '담당자');
-//
-//
-//                $filter->where(function ($query) {
-//
-//                    $query->where('address1', 'like', "%{$this->input}%")
-//                        ->orWhere('address2', 'like', "%{$this->input}%");
-//
-//                }, '주소');
-//
-//                $filter->between('created_at', '등록일')->datetime();
-//
-//            });
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
+                $filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
+                $filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
+                $filter->like('company', '회사명');
+                $filter->like('name', '성명');
+                $filter->like('email', '이메일');
+                $filter->like('manager', '담당자');
+
+
+                $filter->where(function ($query) {
+
+                    $query->where('address1', 'like', "%{$this->input}%")
+                        ->orWhere('address2', 'like', "%{$this->input}%");
+
+                }, '주소');
+
+                $filter->between('created_at', '등록일')->datetime();
+
+            });
 
             $grid->exporter(new ExcelExpoter());
         });
