@@ -7,6 +7,22 @@
   </colgroup>
   <tbody>
   <tr>
+    <th class="text-center" style="background-color: #f1f1f1">회사명</th>
+    <td>
+      <input type="text" class="form-control company" placeholder="회사명" name="company" value="{{ old('company') }}">
+    </td>
+    <th class="text-center" style="background-color: #f1f1f1">영업담당자</th>
+    <td>
+      <input type="text" class="form-control manager" placeholder="담당자" name="manager" value="{{ old('manager') }}">
+    </td>
+  </tr>
+
+
+  <tr>
+    <th class="text-center" style="background-color: #f1f1f1">미수금</th>
+    <td>
+      준비중
+    </td>
     <th class="text-center" style="background-color: #f1f1f1">고객분류</th>
     <td>
       <div class="form-group">
@@ -22,50 +38,12 @@
         </div>
       </div>
     </td>
-    <th class="text-center" style="background-color: #f1f1f1">영업분류</th>
-    <td>
-      <div class="form-group">
-        <div class="input-group-btn">
-          <select name="categorySales" class="form-control input-sm">
-            @foreach($categorySales as $categorySale => $label)
-              <option
-                value="{{ $categorySale }}" {{ \Request::get('categorySales', 'all') == $categorySale ? 'selected' : '' }}>
-                {{ $label }}
-              </option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-    </td>
-  </tr>
-
-
-  <tr>
-    <th class="text-center" style="background-color: #f1f1f1">납품분류</th>
-    <td>
-      <div class="form-group">
-        <div class="input-group-btn">
-          <select name="categoryDelivery" class="form-control input-sm">
-            @foreach($categoryDeliverys as $categoryDelivery => $label)
-              <option
-                value="{{ $categoryDelivery }}" {{ \Request::get('categoryDelivery', 'all') == $categoryDelivery ? 'selected' : '' }}>
-                {{ $label }}
-              </option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-    </td>
-    <th class="text-center" style="background-color: #f1f1f1">회사명</th>
-    <td>
-      <input type="text" class="form-control company" placeholder="회사명" name="company" value="">
-    </td>
   </tr>
 
   <tr>
-    <th class="text-center" style="background-color: #f1f1f1">영업담당자</th>
+    <th class="text-center" style="background-color: #f1f1f1">매출금</th>
     <td>
-      <input type="text" class="form-control manager" placeholder="담당자" name="manager" value="{{ old('manager') }}">
+      준비중
     </td>
     <th class="text-center" style="background-color: #f1f1f1">등록일</th>
     <td>
@@ -128,3 +106,4 @@
     });
   });
 </script>
+

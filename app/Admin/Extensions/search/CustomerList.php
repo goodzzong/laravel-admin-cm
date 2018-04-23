@@ -10,6 +10,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\CustomerContent;
 use Encore\Admin\Layout\Row;
+use Illuminate\Http\Request;
 
 class CustomerList
 {
