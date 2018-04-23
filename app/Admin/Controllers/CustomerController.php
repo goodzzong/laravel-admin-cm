@@ -45,10 +45,8 @@ class CustomerController extends Controller
 
             $content->body($this->grid());
 
-
         });
     }
-
 
     public function detail($customerId)
     {
@@ -88,9 +86,10 @@ class CustomerController extends Controller
             $content->description('등록');
 
             $content->body($this->form());
+
+
         });
     }
-
 
     protected function grid()
     {
@@ -99,22 +98,35 @@ class CustomerController extends Controller
 
             //$grid->model()->userId(Admin::user());
             $grid->model()->orderBy('id', 'desc');
+            $grid->paginate(20);
+
             $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
             $grid->model()->categorySalesId(Request::get('categorySales'));
             $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
 
             $grid->model()->importance(Request::get('importance'));
-            $grid->paginate(10);
             $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
-                return Category::find($category_customer_id)->title;
+                if ($category_customer_id) {
+                    return Category::find($category_customer_id)->title;
+                } else {
+                    return '';
+                }
             });
 
             $grid->category_sales_id('영업분류')->display(function ($category_sales_id) {
-                return Category::find($category_sales_id)->title;
+                if ($category_sales_id) {
+                    return Category::find($category_sales_id)->title;
+                } else {
+                    return '';
+                }
             });
 
             $grid->category_delivery_id('납품분류')->display(function ($category_delivery_id) {
-                return Category::find($category_delivery_id)->title;
+                if ($category_delivery_id) {
+                    return Category::find($category_delivery_id)->title;
+                } else {
+                    return '';
+                }
             });
 
             $grid->manager('영업담당자')->sortable();
@@ -149,9 +161,9 @@ class CustomerController extends Controller
             });
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('category_customer_id','고객분류')->select(Category::selectOptionsIns(1));
-                $filter->equal('category_sales_id','영업분류')->select(Category::selectOptionsIns(2));
-                $filter->equal('category_delivery_id','납품분류')->select(Category::selectOptionsIns(3));
+                $filter->equal('category_customer_id', '고객분류')->select(Category::selectOptionsIns(1));
+                $filter->equal('category_sales_id', '영업분류')->select(Category::selectOptionsIns(2));
+                $filter->equal('category_delivery_id', '납품분류')->select(Category::selectOptionsIns(3));
                 $filter->like('company', '회사명');
                 $filter->like('name', '성명');
                 $filter->like('email', '이메일');
@@ -176,11 +188,9 @@ class CustomerController extends Controller
 
     protected function form()
     {
-
         return Admin::form(Customer::class, function (Form $form) {
 
             $form->tab('기본정보', function (Form $form) {
-
 
                 $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
                 $form->hidden('user_id')->value(Admin::user()->id);
@@ -192,7 +202,6 @@ class CustomerController extends Controller
 //            $form->select('category_customer_id', '고객사분류')->options(
 //                Category::parentId()->pluck('title', 'id')
 //            )->setWidth(2);
-
 
                 $form->select('category_sales_id', '영업분류')->options(Category::selectOptionsIns(2))->rules('required', [
                     'required' => '그룹을 선택해 주세요.',
@@ -219,7 +228,6 @@ class CustomerController extends Controller
 
                 $form->divide();
 
-
                 $form->text('company', '회사')
                     ->placeholder('회사명을 입력해 주세요.')
                     ->setWidth(5)->rules('nullable');
@@ -232,17 +240,19 @@ class CustomerController extends Controller
                     ]);
 
                 $form->text('rank', '직급')
-                    ->placeholder('직급을 입력해 주세요.')
-                    ->setWidth(5)->rules('nullable');
-
+                    ->setWidth('2')
+                    ->placeholder('직급')
+                    ->rules('nullable');
 
                 $form->text('main_phone', '대표전화')
                     ->setWidth('2')
                     ->placeholder('대표전화')
                     ->rules('nullable');
+
                 $form->mobile('phone_number', '휴대폰')
                     ->placeholder('휴대폰')
                     ->options(['mask' => '999 9999 9999'])->rules('nullable');
+
                 $form->text('fax_number', '팩스')
                     ->setWidth('2')
                     ->placeholder('팩스')
@@ -250,11 +260,7 @@ class CustomerController extends Controller
 
                 $form->email('email', '이메일')
                     ->setWidth('5')
-                    ->placeholder('이메일을 입력해 주세요.')
-                    ->rules('required|email', [
-                        'required' => '이메일을 입력해 주세요.',
-                        'email' => '이메일 형식으로 입력해 주세요.',
-                    ]);
+                    ->placeholder('이메일을 입력해 주세요.')->rules('nullable');
 
                 $form->address('zipcode', '우편번호')
                     ->setWidth('2')
@@ -291,15 +297,9 @@ class CustomerController extends Controller
                         ->placeholder('매출금액을 입력해 주세요.');
                     $form->datetime('sales_at', '매출발생일자')
                         ->placeholder('날짜입력');
-
-
                 });
-
-
             });
 
         });
-
     }
-
 }

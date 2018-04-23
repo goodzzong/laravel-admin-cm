@@ -47,4 +47,8 @@ class HomeController extends Controller
             });
         });
     }
+    public function info()
+    {
+        echo phpinfo();
+    }
 }

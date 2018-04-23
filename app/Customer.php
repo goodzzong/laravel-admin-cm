@@ -15,12 +15,37 @@ class Customer extends Model implements Sortable
     use SoftDeletes, AdminBuilder, SortableTrait;
 
     protected $table = 'customers';
-
     protected $dates = ['deleted_at'];
+    protected $fillable = [
+        'id',
+        'user_id',
+        'category_customer_id',
+        'category_sales_id',
+        'category_delivery_id',
+        'manager',
+        'importance',
+        'company',
+        'name',
+        'rank',
+        'main_phone',
+        'phone_number',
+        'fax_number',
+        'email',
+        'zipcode',
+        'address1',
+        'address2',
+        'extra_info',
+        'contents',
+        'picture',
+        'attach_files',
+        'created_at',
+        'updated_at',
+        'deleted_at',
 
+    ];
     public $sortable = [
-        'order_column_name' => 'rank',
-        'sort_when_creating' => true,
+        'order_column_name' => '',
+        'sort_when_creating' => false,
     ];
 
     public function category()
@@ -40,14 +65,13 @@ class Customer extends Model implements Sortable
 
     public function scopeUserId($query, $user)
     {
-        //eturn $this->belongsTo(Administrator::class);
-
+        //return $this->belongsTo(Administrator::class);
         return $query->where('user_id', $user->id);
     }
 
     public function scopeTotals($query)
     {
-        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->orderBy('total','desc')->get();
+        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->orderBy('total', 'desc')->get();
     }
 
     public function scopeImportance($query, $importance)
@@ -171,8 +195,6 @@ class Customer extends Model implements Sortable
             $this->attributes['attach_files'] = json_encode($attach_files);
         }
     }
-
-
 
 
 }
