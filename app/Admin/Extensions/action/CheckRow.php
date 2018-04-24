@@ -55,7 +55,7 @@ SCRIPT;
 //        <button class='btn btn-default btn-sm grid-check-row' data-id='{$this->id}' data-key=\"{$this->id}\" d data-toggle=\"modal\" data-target=\"#grid-modal-position-{$this->id}\" >detail</button>
         return "
 <a href='javascript:;'>
- <i class=\"fa-sticky-note grid-check-row\" data-id='{$this->id}' data-key=\"{
+ <i class='glyphicon glyphicon-new-window grid-check-row' data-id='{$this->id}' data-key=\"{
         $this->id}\" d data-toggle=\"modal\" data-target=\"#grid-modal-position-{$this->id}\"> </i>
 </a>
 <div class=\"modal\" id=\"grid-modal-position-{$this->id}\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">

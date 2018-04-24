@@ -56,7 +56,8 @@ class CustomerController extends Controller
         $category_delivery = Category::find($customer->category_delivery_id);
         $sales = Sale::where('customer_id', $customerId)->get();
         $salesResultPrice = Sale::where('customer_id', $customerId)->sum('price');
-        return view('admin::customer.detail', [
+
+        return view('admin.customers.detail', [
             'customer' => $customer,
             'category_customer' => $category_customer,
             'category_sales' => $category_sales,
@@ -149,6 +150,7 @@ class CustomerController extends Controller
 //                    $actions->disableDelete();
 //                }
                 $actions->disableDelete();
+                $actions->disableEdit();
                 $actions->append(new CheckRow($actions->getKey()));
 
             });
