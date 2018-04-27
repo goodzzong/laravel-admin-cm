@@ -9,6 +9,7 @@ use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
 use App\Customer;
 use App\Sale;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Search;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -18,6 +19,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -149,6 +151,7 @@ class CustomerController extends Controller
 //                if (!Admin::user()->can('admin.customer.update') || Admin::user()->id != $actions->row['user_id']) {
 //                    $actions->disableDelete();
 //                }
+
                 $actions->disableDelete();
                 $actions->disableEdit();
                 $actions->append(new CheckRow($actions->getKey()));
@@ -190,6 +193,7 @@ class CustomerController extends Controller
 
     protected function form()
     {
+
         return Admin::form(Customer::class, function (Form $form) {
 
             $form->tab('기본정보', function (Form $form) {
@@ -277,9 +281,7 @@ class CustomerController extends Controller
                     ->placeholder('상세주소를 입력해 주세요.')
                     ->attribute(['class' => 'postcodify_details form-control'])->rules('nullable');
 
-
                 $form->divide();
-
 
                 $form->textarea('contents', '특이사항')
                     ->placeholder('특이사항을 입력해 주세요.')->rules('nullable');
@@ -292,16 +294,78 @@ class CustomerController extends Controller
 
                 // $form->hidden('customer_id')->value(Admin::user()->id);
                 $form->hasMany('sales', '매출정보입력', function (Form\NestedForm $form) {
-                    $form->text('placeOfDelivery', '납품장소')
-                        ->placeholder('납품장소를 입력해 주세요.');
+                    $form->text('placeOfDelivery', '매출건명')
+                        ->placeholder('매출건명을 입력해 주세요.');
                     $form->currency('price', '매출금액')
                         ->symbol('₩')
                         ->placeholder('매출금액을 입력해 주세요.');
                     $form->datetime('sales_at', '매출발생일자')
                         ->placeholder('날짜입력');
+
+                    $form->divider();
+
+                    //$form->hidden('collectPriceAll')->value('aaa');
+                    $form->currency('collectPrice1', '수금액(1차)')
+                        ->symbol('₩');
+                    $form->currency('collectPrice2', '수금액(2차)')
+                        ->symbol('₩');
+                    $form->currency('collectPrice3', '수금액(3차)')
+                        ->symbol('₩');
+                    $form->currency('collectPrice4', '수금액(4차)')
+                        ->symbol('₩');
+                    $form->currency('collectPrice5', '수금액(5차)')
+                        ->symbol('₩');
+
                 });
+
+//                $form->hasManySub('collect_prices', '수금액', function (Form\NestedForm $form) {
+//                    $form->text('title');
+//                });
+
             });
 
         });
     }
+
+    public function destroy($id)
+    {
+        if ($this->form()->destroy($id)) {
+
+            $deletedRows = Sale::where('customer_id', $id)->delete();
+            if ($deletedRows) {
+                return response()->json([
+                    'status' => true,
+                    'message' => trans('admin.delete_succeeded'),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => trans('admin.delete_failed'),
+                ]);
+            }
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => trans('admin.delete_failed'),
+            ]);
+        }
+    }
+
+    public function store()
+    {
+//        $user = $request->user();
+//
+//        $customer = $user->customers()->create([
+//            'manager' => $request->input('manager'),
+//            'user_id' => $user->id
+//        ]);
+        return $this->form()->store();
+    }
+
+    public function update($id)
+    {
+        return $this->form()->update($id);
+    }
+
 }
