@@ -14,6 +14,7 @@ class Sale extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
+        'user_id',
         'customer_id',
         'placeOfDelivery',
         'price',
@@ -28,6 +29,7 @@ class Sale extends Model
         'collectPrice9',
         'collectPrice10',
         'collectPriceAll',
+        'noCollectPrice',
         'sales_at',
     ];
 

@@ -16,9 +16,11 @@ class CreateSalesTable extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('customer_id')->comment('고객테이블 ID');
+            $table->unsignedInteger('user_id')->comment('회원 ID');
             $table->string('placeOfDelivery')->nullable()->comment('매출건명');
             $table->integer('price')->nullable()->comment('매출금액');
             $table->integer('collectPriceAll')->nullable()->comment('총 입금금액');
+            $table->integer('noCollectPrice')->nullable()->comment('총 미수금액');
             $table->integer('collectPrice1')->nullable()->comment('입금금액1');
             $table->integer('collectPrice2')->nullable()->comment('입금금액2');
             $table->integer('collectPrice3')->nullable()->comment('입금금액3');
@@ -34,6 +36,7 @@ class CreateSalesTable extends Migration
             $table->softDeletes();
 
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('admin_users')->onDelete('cascade');
         });
     }
 

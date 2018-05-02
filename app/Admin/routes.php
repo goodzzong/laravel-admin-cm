@@ -1,4 +1,6 @@
 <?php
+
+use App\Admin\Controllers\CollectController;
 use Illuminate\Routing\Router;
 
 Admin::registerAuthRoutes();
@@ -14,12 +16,14 @@ Route::group([
         'categories'           => CategoryController::class,
         'customers'            => CustomerController::class,
         'notices'              => NoticeController::class,
-
+       // 'statistics/collect'   => CollectController::class,
     ]);
 
     $router->get('/', 'HomeController@index');
     $router->get('customer/detail/{customerId}', 'CustomerController@detail')->name('customer.detail');
 
     $router->get('/info', 'HomeController@info');
+
+    $router->get('statistics/collect', 'CollectController@index');
 
 });

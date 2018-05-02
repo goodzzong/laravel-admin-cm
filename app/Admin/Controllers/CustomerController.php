@@ -9,7 +9,6 @@ use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
 use App\Customer;
 use App\Sale;
-use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Search;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -19,7 +18,6 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -292,8 +290,11 @@ class CustomerController extends Controller
 
             })->tab('매출정보', function (Form $form) {
 
-                // $form->hidden('customer_id')->value(Admin::user()->id);
+                //$form->hidden('collectPriceAll');
+
                 $form->hasMany('sales', '매출정보입력', function (Form\NestedForm $form) {
+
+                    $form->hidden('user_id')->value(Admin::user()->id);
                     $form->text('placeOfDelivery', '매출건명')
                         ->placeholder('매출건명을 입력해 주세요.');
                     $form->currency('price', '매출금액')
@@ -304,7 +305,7 @@ class CustomerController extends Controller
 
                     $form->divider();
 
-                    //$form->hidden('collectPriceAll')->value('aaa');
+                    //$form->hidden('collectPriceAll')->value('');
                     $form->currency('collectPrice1', '수금액(1차)')
                         ->symbol('₩');
                     $form->currency('collectPrice2', '수금액(2차)')
@@ -315,6 +316,16 @@ class CustomerController extends Controller
                         ->symbol('₩');
                     $form->currency('collectPrice5', '수금액(5차)')
                         ->symbol('₩');
+
+                    $form->currency('collectPriceAll',' 총 수금액')
+                        ->symbol('₩')
+                        ->placeholder('0')
+                        ->value('0');
+
+                    $form->currency('noCollectPrice','미수금액')
+                        ->symbol('₩')
+                        ->placeholder('0')
+                        ->value('0');
 
                 });
 
@@ -354,12 +365,7 @@ class CustomerController extends Controller
 
     public function store()
     {
-//        $user = $request->user();
-//
-//        $customer = $user->customers()->create([
-//            'manager' => $request->input('manager'),
-//            'user_id' => $user->id
-//        ]);
+
         return $this->form()->store();
     }
 
