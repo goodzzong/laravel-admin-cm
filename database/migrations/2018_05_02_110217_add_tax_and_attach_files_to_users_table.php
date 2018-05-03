@@ -15,7 +15,7 @@ class AddTaxAndAttachFilesToUsersTable extends Migration
     {
         Schema::table('sales', function (Blueprint $table) {
             $table->enum('tax',['1','2'])->defalut(1)->after('collectPrice10');
-            $table->text('attach_files')->comment('첨부파일')->after('tax');
+            $table->text('attach_sales_file')->nullable()->comment('첨부파일')->after('tax');
         });
     }
 
@@ -27,7 +27,7 @@ class AddTaxAndAttachFilesToUsersTable extends Migration
     public function down()
     {
         Schema::table('sales', function (Blueprint $table) {
-            $table->dropColumn(['tax', 'attach_files']);
+            $table->dropColumn(['tax', 'attach_sales_file']);
         });
     }
 }

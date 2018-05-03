@@ -106,6 +106,7 @@ class CustomerController extends Controller
             $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
 
             $grid->model()->importance(Request::get('importance'));
+
             $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
                 if ($category_customer_id) {
                     return Category::find($category_customer_id)->title;
@@ -192,9 +193,9 @@ class CustomerController extends Controller
     protected function form()
     {
 
-        return Admin::form(Customer::class, function (Form $form) {
+        return Admin::form(Customer::class, function (Form $form){
 
-            $form->tab('기본정보', function (Form $form) {
+            $form->tab('기본정보', function (Form $form){
 
                 $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
                 $form->hidden('user_id')->value(Admin::user()->id);
@@ -229,6 +230,26 @@ class CustomerController extends Controller
                     4 => '★★★★',
                     5 => '★★★★★',
                 ])->stacked()->rules('nullable');
+
+
+                if (Admin::user()->can('admin.customers.discount')) {
+                    $form->currency('discountRateManufacturing', '제조할인율')
+                        ->symbol('%')
+                        ->setWidth(3);
+                    $form->currency('discountRateDistribution', '유통할인율')
+                        ->symbol('%')
+                        ->setWidth(3);
+                } else {
+                    $form->currency('discountRateManufacturing', '제조할인율')
+                        ->symbol('%')
+                        ->readOnly()
+                        ->setWidth(3);
+                    $form->currency('discountRateDistribution', '유통할인율')
+                        ->symbol('%')
+                        ->readOnly()
+                        ->setWidth(3);
+                }
+
 
                 $form->divide();
 
@@ -288,9 +309,13 @@ class CustomerController extends Controller
 
                 $form->multipleFile('attach_files', '첨부파일')->rules('nullable')->removable();
 
-            })->tab('매출정보', function (Form $form) {
 
-                //$form->hidden('collectPriceAll');
+                if (!Admin::user()->can('admin.customer.update')) {
+                    $form->disableSubmit();
+                }
+
+
+            })->tab('매출정보', function (Form $form) {
 
                 $form->hasMany('sales', '매출정보입력', function (Form\NestedForm $form) {
 
@@ -303,36 +328,36 @@ class CustomerController extends Controller
                     $form->datetime('sales_at', '매출발생일자')
                         ->placeholder('날짜입력');
 
+                    $states = [
+                        'on' => ['value' => 2, 'text' => 'YES', 'color' => 'success'],
+                        'off' => ['value' => 1, 'text' => 'NO', 'color' => 'default'],
+                    ];
+
+                    $form->switch('tax', '세금계산서 발행여부')->states($states)->default(1);
+
+
+                    $form->file('attach_sales_file', '첨부파일');
+
                     $form->divider();
 
-                    //$form->hidden('collectPriceAll')->value('');
                     $form->currency('collectPrice1', '수금액(1차)')
                         ->symbol('₩');
                     $form->currency('collectPrice2', '수금액(2차)')
                         ->symbol('₩');
                     $form->currency('collectPrice3', '수금액(3차)')
                         ->symbol('₩');
-                    $form->currency('collectPrice4', '수금액(4차)')
-                        ->symbol('₩');
-                    $form->currency('collectPrice5', '수금액(5차)')
-                        ->symbol('₩');
 
-                    $form->currency('collectPriceAll',' 총 수금액')
+
+                    $form->currency('collectPriceAll', ' 총 수금액')
                         ->symbol('₩')
                         ->placeholder('0')
                         ->value('0');
 
-                    $form->currency('noCollectPrice','미수금액')
+                    $form->currency('noCollectPrice', '미수금액')
                         ->symbol('₩')
                         ->placeholder('0')
                         ->value('0');
-
                 });
-
-//                $form->hasManySub('collect_prices', '수금액', function (Form\NestedForm $form) {
-//                    $form->text('title');
-//                });
-
             });
 
         });

@@ -11,6 +11,7 @@ class Sale extends Model
     use Notifiable;
     use SoftDeletes;
 
+    protected $table = 'sales';
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
@@ -30,12 +31,15 @@ class Sale extends Model
         'collectPrice10',
         'collectPriceAll',
         'noCollectPrice',
-        'sales_at',
+        'tax',
+        'attach_sales_file',
+        'sales_at'
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
+
 
 }
