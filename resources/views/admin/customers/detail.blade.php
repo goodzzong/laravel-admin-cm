@@ -9,8 +9,8 @@
     </li>
     <li role="presentation">
       <a href="#sales{{ $customer->id }}" aria-controls="sales{{ $customer->id }}" role="tab"
-         data-toggle="tab">매출정보</a></li>
-
+         data-toggle="tab">매출정보</a>
+    </li>
   </ul>
 
   <!-- Tab panes -->
@@ -171,8 +171,11 @@
         <table class="table table-bordered">
           <tr>
             <td style="background-color: #f1f1f1"></td>
-            <td class="text-center" style="background-color: #f1f1f1">납품장소</td>
+            <td class="text-center" style="background-color: #f1f1f1">매출건명</td>
             <td class="text-center" style="background-color: #f1f1f1">매출발생일자</td>
+
+            <td class="text-center" style="background-color: #f1f1f1">총수금액</td>
+            <td class="text-center" style="background-color: #f1f1f1">총미수금액</td>
             <td class="text-center" style="background-color: #f1f1f1">매출금액</td>
           </tr>
 
@@ -181,12 +184,18 @@
               <td class="text-center">{{ $key + 1 }}</td>
               <td class="text-center">{{ $sale->placeOfDelivery }}</td>
               <td class="text-center">{{ substr($sale->sales_at,0,10) }}</td>
+
+              <td class="text-center">{{ number_format($sale->collectPriceAll) }} 원</td>
+              <td class="text-center">{{ number_format($sale->noCollectPrice) }} 원</td>
               <td class="text-center">{{ number_format($sale->price) }} 원</td>
             </tr>
           @endforeach
 
           <tr>
             <td class="text-center" colspan="3" style="background-color: #f1f1f1">합계</td>
+
+            <td class="text-center">{{ number_format($collectResultPrice) }} 원</td>
+            <td class="text-center">{{ number_format($noSalesResultPrice) }} 원</td>
             <td class="text-center">{{ number_format($salesResultPrice) }} 원</td>
           </tr>
 

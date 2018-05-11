@@ -41,5 +41,13 @@ class Sale extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function scopeCustomerId($query, $customerId)
+    {
+        if (!isset($customerId)) {
+            return $query;
+        }
+      //  dd($query);
+        return $query->where('customer_id', $customerId);
+    }
 
 }

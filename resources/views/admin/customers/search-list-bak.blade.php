@@ -1,4 +1,3 @@
-<input type="hidden" name="customerId" value="{{ isset($_REQUEST['customerId'])? $_REQUEST['customerId']:'' }}">
 <table class="table table-bordered">
   <colgroup>
     <col width="25%">
@@ -20,10 +19,29 @@
     </td>
   </tr>
 
+
   <tr>
-    <th class="text-center" style="background-color: #f1f1f1">고객분류</th>
+    <th class="text-center" style="background-color: #f1f1f1">미수금</th>
     <td>
 
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input type="text" class="form-control" id="noSales_created_at_start" placeholder="등록일"
+                 name="noSales_created_at[start]"
+                 value="{{ isset($_REQUEST['noSales_created_at']['start'])? $_REQUEST['noSales_created_at']['start']:'' }}">
+          <span class="input-group-addon" style="border-left: 0; border-right: 0;">-</span>
+          <input type="text" class="form-control" id="noSales_created_at_end" placeholder="등록일"
+                 name="noSales_created_at[end]"
+                 value="{{ isset($_REQUEST['noSales_created_at']['end'])? $_REQUEST['noSales_created_at']['end']:'' }}">
+        </div>
+      </div>
+
+    </td>
+    <th class="text-center" style="background-color: #f1f1f1">고객분류</th>
+    <td>
       <div class="form-group">
         <div class="input-group-btn">
           <select name="categoryCustomer" class="form-control input-sm">
@@ -34,6 +52,27 @@
               </option>
             @endforeach
           </select>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <tr>
+    <th class="text-center" style="background-color: #f1f1f1">매출금</th>
+    <td>
+
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input type="text" class="form-control" id="sales_created_at_start" placeholder="등록일"
+                 name="sales_created_at[start]"
+                 value="{{ isset($_REQUEST['sales_created_at']['start'])? $_REQUEST['sales_created_at']['start']:'' }}">
+          <span class="input-group-addon" style="border-left: 0; border-right: 0;">-</span>
+          <input type="text" class="form-control" id="sales_created_at_end" placeholder="등록일"
+                 name="sales_created_at[end]"
+                 value="{{ isset($_REQUEST['sales_created_at']['end'])? $_REQUEST['sales_created_at']['end']:'' }}">
         </div>
       </div>
 

@@ -36,7 +36,7 @@ return [
     'entries'      => 'entries',
     'captcha'      => 'Captcha',
 
-    'action'            => 'Action',
+    'action'            => '상세내용',
     'title'             => 'Title',
     'description'       => 'Description',
     'back'              => '뒤로가기',

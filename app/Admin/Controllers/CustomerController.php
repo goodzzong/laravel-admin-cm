@@ -18,6 +18,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -57,6 +58,9 @@ class CustomerController extends Controller
         $sales = Sale::where('customer_id', $customerId)->get();
         $salesResultPrice = Sale::where('customer_id', $customerId)->sum('price');
 
+        $noSalesResultPrice = Sale::where('customer_id', $customerId)->sum('noCollectPrice');
+        $collectResultPrice = Sale::where('customer_id', $customerId)->sum('collectPriceAll');
+
         return view('admin.customers.detail', [
             'customer' => $customer,
             'category_customer' => $category_customer,
@@ -64,6 +68,8 @@ class CustomerController extends Controller
             'category_delivery' => $category_delivery,
             'sales' => $sales,
             'salesResultPrice' => $salesResultPrice,
+            'noSalesResultPrice' => $noSalesResultPrice,
+            'collectResultPrice' => $collectResultPrice,
         ]);
     }
 
@@ -95,107 +101,161 @@ class CustomerController extends Controller
     protected function grid()
     {
 
-        return Admin::grid(Customer::class, function (Grid $grid) {
+        if (isset($_REQUEST['customerId'])) {
 
-            //$grid->model()->userId(Admin::user());
-            $grid->model()->orderBy('id', 'desc');
-            $grid->paginate(20);
+            return Admin::grid(Sale::class, function (Grid $grid) {
 
-            $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
-            $grid->model()->categorySalesId(Request::get('categorySales'));
-            $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
+                $grid->model()->customerId(Request::get('customerId'));
 
-            $grid->model()->importance(Request::get('importance'));
+                //$grid->id('id');
+                $grid->customer()->company('회사명')->sortable();
+                $grid->customer()->manager('영업담당자')->sortable();
 
-            $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
-                if ($category_customer_id) {
-                    return Category::find($category_customer_id)->title;
-                } else {
-                    return '';
-                }
+                $grid->placeOfDelivery('매출건명');
+                $grid->price('매출금액')->display(function ($price) {
+                    return number_format($price);
+                });
+                $grid->collectPriceAll('수금액')->display(function ($collectPriceAll) {
+                    return number_format($collectPriceAll);
+                });
+                $grid->noCollectPrice('미수금')->display(function ($noCollectPrice) {
+                    return number_format($noCollectPrice);
+                });
+
+                $grid->created_at('등록일')->sortable();
+
+                $grid->filter(function (Grid\Filter $filter) {
+                    $filter->between('created_at', '등록일')->datetime();
+                });
             });
 
-            $grid->category_sales_id('영업분류')->display(function ($category_sales_id) {
-                if ($category_sales_id) {
-                    return Category::find($category_sales_id)->title;
-                } else {
-                    return '';
-                }
-            });
+        } else {
 
-            $grid->category_delivery_id('납품분류')->display(function ($category_delivery_id) {
-                if ($category_delivery_id) {
-                    return Category::find($category_delivery_id)->title;
-                } else {
-                    return '';
-                }
-            });
+            return Admin::grid(Customer::class, function (Grid $grid) {
 
-            $grid->manager('영업담당자')->sortable();
+                //$grid->model()->userId(Admin::user());
+                $grid->model()->orderBy('id', 'desc');
+                $grid->paginate(20);
 
-            $grid->importance('고객중요도')->display(function ($importance) {
-                $html = "<i class='fa fa-star' style='color:#ff8913'></i>";
+                $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
+                $grid->model()->categorySalesId(Request::get('categorySales'));
+                $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
+                $grid->model()->importance(Request::get('importance'));
 
-                return join('&nbsp;', array_fill(0, min(5, $importance), $html));
-            })->sortable();
+                $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
+                    if ($category_customer_id) {
+                        return Category::find($category_customer_id)->title;
+                    } else {
+                        return '';
+                    }
+                });
 
-            $grid->company('회사명')->sortable();
-            $grid->name('성명')->sortable();
-            $grid->main_phone('대표전화')->sortable();
-            $grid->email()->sortable();
+                $grid->category_sales_id('영업분류')->display(function ($category_sales_id) {
+                    if ($category_sales_id) {
+                        return Category::find($category_sales_id)->title;
+                    } else {
+                        return '';
+                    }
+                });
+
+                $grid->category_delivery_id('납품분류')->display(function ($category_delivery_id) {
+                    if ($category_delivery_id) {
+                        return Category::find($category_delivery_id)->title;
+                    } else {
+                        return '';
+                    }
+                });
+
+                $grid->manager('영업담당자')->sortable();
+
+                $grid->importance('고객중요도')->display(function ($importance) {
+                    $html = "<i class='fa fa-star' style='color:#ff8913'></i>";
+
+                    return join('&nbsp;', array_fill(0, min(5, $importance), $html));
+                })->sortable();
+
+                $grid->company('회사명')->sortable();
+                $grid->name('성명')->sortable();
+                //$grid->main_phone('대표전화')->sortable();
+                //$grid->email()->sortable();
 
 
-            $grid->actions(function ($actions) {
+                $grid->actions(function ($actions) {
 
 //                if (!Admin::user()->can('admin.customer.update') || Admin::user()->id != $actions->row['user_id']) {
 //                    $actions->disableDelete();
 //                }
 
-                $actions->disableDelete();
-                $actions->disableEdit();
-                $actions->append(new CheckRow($actions->getKey()));
+                    $actions->disableDelete();
+                    $actions->disableEdit();
+                    $actions->append(new CheckRow($actions->getKey()));
+
+                });
+
+
+                $grid->sales('매출금 / 총수금액 / 총미수금')->display(function ($sales) {
+                    $result_price = 0;
+                    $result_CollectPriceAll = 0;
+                    $result_noCollectPrice = 0;
+                    foreach ($sales as $key => $sale) {
+                        $result_price += $sale['price'];
+                        $result_CollectPriceAll += $sale['collectPriceAll'];
+                        $result_noCollectPrice += $sale['noCollectPrice'];
+                    }
+                    $result_price = number_format($result_price);
+                    $result_CollectPriceAll = number_format($result_CollectPriceAll);
+                    $result_noCollectPrice = number_format($result_noCollectPrice);
+
+                    if ($result_price > 0 || $result_CollectPriceAll > 0 || $result_noCollectPrice > 0) {
+                        return "<font color='blue'>" . $result_price . "</font> / " . "<font color='green'>" . $result_CollectPriceAll . "</font>" . "/ <font color='red'>" . $result_noCollectPrice . "</font>";
+
+                    } else {
+                        return '';
+                    }
+
+
+                });
+
+                $grid->created_at('등록일')->sortable();
+                $grid->tools(function ($tools) {
+
+                    $tools->append(new CustomerImportance());
+                    //$tools->append(new CustomerCategory());
+                });
+
+                $grid->filter(function (Grid\Filter $filter) {
+                    $filter->equal('category_customer_id', '고객분류')->select(Category::selectOptionsIns(1));
+                    $filter->equal('category_sales_id', '영업분류')->select(Category::selectOptionsIns(2));
+                    $filter->equal('category_delivery_id', '납품분류')->select(Category::selectOptionsIns(3));
+                    $filter->like('company', '회사명');
+                    $filter->like('name', '성명');
+                    $filter->like('email', '이메일');
+                    $filter->like('manager', '담당자');
+
+
+                    $filter->where(function ($query) {
+
+                        $query->where('address1', 'like', "%{$this->input}%")
+                            ->orWhere('address2', 'like', "%{$this->input}%");
+
+                    }, '주소');
+
+                    $filter->between('created_at', '등록일')->datetime();
+
+                });
+
+                $grid->exporter(new ExcelExpoter());
 
             });
-
-            $grid->created_at('등록일')->sortable();
-            $grid->tools(function ($tools) {
-
-                $tools->append(new CustomerImportance());
-                //$tools->append(new CustomerCategory());
-            });
-
-            $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('category_customer_id', '고객분류')->select(Category::selectOptionsIns(1));
-                $filter->equal('category_sales_id', '영업분류')->select(Category::selectOptionsIns(2));
-                $filter->equal('category_delivery_id', '납품분류')->select(Category::selectOptionsIns(3));
-                $filter->like('company', '회사명');
-                $filter->like('name', '성명');
-                $filter->like('email', '이메일');
-                $filter->like('manager', '담당자');
-
-
-                $filter->where(function ($query) {
-
-                    $query->where('address1', 'like', "%{$this->input}%")
-                        ->orWhere('address2', 'like', "%{$this->input}%");
-
-                }, '주소');
-
-                $filter->between('created_at', '등록일')->datetime();
-
-            });
-
-            $grid->exporter(new ExcelExpoter());
-        });
+        }
     }
-
 
     protected function form()
     {
 
-        return Admin::form(Customer::class, function (Form $form){
+        return Admin::form(Customer::class, function (Form $form) {
 
-            $form->tab('기본정보', function (Form $form){
+            $form->tab('기본정보', function (Form $form) {
 
                 $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
                 $form->hidden('user_id')->value(Admin::user()->id);
@@ -230,7 +290,6 @@ class CustomerController extends Controller
                     4 => '★★★★',
                     5 => '★★★★★',
                 ])->stacked()->rules('nullable');
-
 
                 if (Admin::user()->can('admin.customers.discount')) {
                     $form->currency('discountRateManufacturing', '제조할인율')
@@ -310,9 +369,9 @@ class CustomerController extends Controller
                 $form->multipleFile('attach_files', '첨부파일')->rules('nullable')->removable();
 
 
-                if (!Admin::user()->can('admin.customer.update')) {
-                    $form->disableSubmit();
-                }
+//                if (!Admin::user()->can('admin.customer.update')) {
+//                    $form->disableSubmit();
+//                }
 
 
             })->tab('매출정보', function (Form $form) {
@@ -334,7 +393,6 @@ class CustomerController extends Controller
                     ];
 
                     $form->switch('tax', '세금계산서 발행여부')->states($states)->default(1);
-
 
                     $form->file('attach_sales_file', '첨부파일');
 
