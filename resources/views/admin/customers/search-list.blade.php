@@ -1,4 +1,11 @@
+@php
+  if ( isset($_REQUEST['customerId']) ) {
+@endphp
 <input type="hidden" name="customerId" value="{{ isset($_REQUEST['customerId'])? $_REQUEST['customerId']:'' }}">
+@php
+  }
+@endphp
+
 <table class="table table-bordered">
   <colgroup>
     <col width="25%">
@@ -17,6 +24,19 @@
     <td>
       <input type="text" class="form-control manager" placeholder="담당자" name="manager"
              value="{{ isset($_REQUEST['manager'])? $_REQUEST['manager']:'' }}">
+    </td>
+  </tr>
+
+  <tr>
+    <th class="text-center" style="background-color: #f1f1f1">고객명</th>
+    <td>
+      <input type="text" class="form-control name" placeholder="고객명" name="name"
+             value="{{ isset($_REQUEST['name'])? $_REQUEST['name']:'' }}">
+    </td>
+    <th class="text-center" style="background-color: #f1f1f1">휴대폰</th>
+    <td>
+      <input type="text" class="form-control phone_number" placeholder="휴대폰" name="phone_number"
+             value="{{ isset($_REQUEST['phone_number'])? $_REQUEST['phone_number']:'' }}">
     </td>
   </tr>
 
@@ -53,6 +73,21 @@
                  value="{{ isset($_REQUEST['created_at']['end'])? $_REQUEST['created_at']['end']:'' }}">
         </div>
       </div>
+    </td>
+  </tr>
+
+  <tr>
+    <th class="text-center" style="background-color: #f1f1f1">미수금</th>
+    <td >
+      <input type="checkbox" placeholder="미수금" name="eff2bf8779c7d16b31114be6a0e34743"
+             value="ok" {{ isset($_REQUEST['eff2bf8779c7d16b31114be6a0e34743']) == 'ok'? 'checked':'' }}>
+      <span style="padding-left:5px;">체크시 미수금이 있거나 등록되어 있는것만 검색됩니다.</span>
+    </td>
+
+    <th class="text-center" style="background-color: #f1f1f1">주소(지역)</th>
+    <td>
+      <input type="text" class="form-control" placeholder="휴대폰" name="address1"
+             value="{{ isset($_REQUEST['address1'])? $_REQUEST['address1']:'' }}">
     </td>
   </tr>
 

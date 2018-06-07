@@ -46,8 +46,9 @@ class Sale extends Model
         if (!isset($customerId)) {
             return $query;
         }
-      //  dd($query);
+        //  dd($query);
         return $query->where('customer_id', $customerId);
+        //return $query->select('user_id', DB::raw('count(*) as total'))->groupBy('user_id')->orderBy('total', 'desc')->get();
     }
 
 }

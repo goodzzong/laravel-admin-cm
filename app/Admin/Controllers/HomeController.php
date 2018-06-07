@@ -24,7 +24,7 @@ class HomeController extends Controller
             $content->row(function (Row $row) {
 
                 $row->column(6, function (Column $column) {
-                    $column->append(Dashboard::notices());
+                    $column->append(Dashboard::collectprice());
                 });
 
                 $row->column(6, function (Column $column) {

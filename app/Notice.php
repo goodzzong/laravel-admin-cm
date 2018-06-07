@@ -11,7 +11,7 @@ class Notice extends Model implements Sortable
 {
     use SortableTrait, AdminBuilder;
 
-    protected $fillable = ['title', 'content', 'user_id', 'rank', 'released'];
+    protected $fillable = ['title', 'content', 'attachFile', 'user_id', 'rank', 'released'];
     protected $table = 'admin_notices';
 
     public $sortable = [

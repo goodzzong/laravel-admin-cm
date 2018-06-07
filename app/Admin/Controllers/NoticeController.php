@@ -144,7 +144,7 @@ class NoticeController extends Controller
 //                'required' => '내용을 입력해 주세요.',
 //            ]);
 
-            $form->file('attachFile', '첨부파일')->rules('nullable');
+            $form->file('attachFile', '첨부파일')->removable();
 
             $states = [
                 'on' => ['value' => 1, 'text' => 'YES', 'color' => 'success'],

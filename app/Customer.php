@@ -66,12 +66,14 @@ class Customer extends Model implements Sortable
     public function scopeUserId($query, $user)
     {
         //return $this->belongsTo(Administrator::class);
+
         return $query->where('user_id', $user->id);
     }
 
     public function scopeTotals($query)
     {
-        return $query->select('user_id', DB::raw('count(*) as total'))->whereRaw('deleted_at is null')->groupBy('user_id')->orderBy('total', 'desc')->get();
+        // dd($query);
+        return $query->select('user_id', DB::raw('count(*) as total'))->groupBy('user_id')->orderBy('total', 'desc')->get();
     }
 
     public function scopeImportance($query, $importance)

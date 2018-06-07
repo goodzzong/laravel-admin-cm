@@ -127,6 +127,8 @@ class CustomerController extends Controller
                 $grid->filter(function (Grid\Filter $filter) {
                     $filter->between('created_at', '등록일')->datetime();
                 });
+
+
             });
 
         } else {
@@ -134,6 +136,7 @@ class CustomerController extends Controller
             return Admin::grid(Customer::class, function (Grid $grid) {
 
                 //$grid->model()->userId(Admin::user());
+
                 $grid->model()->orderBy('id', 'desc');
                 $grid->paginate(20);
 
@@ -141,6 +144,7 @@ class CustomerController extends Controller
                 $grid->model()->categorySalesId(Request::get('categorySales'));
                 $grid->model()->categoryDeliveryId(Request::get('categoryDelivery'));
                 $grid->model()->importance(Request::get('importance'));
+
 
                 $grid->category_customer_id('고객사분류')->display(function ($category_customer_id) {
                     if ($category_customer_id) {
@@ -176,8 +180,6 @@ class CustomerController extends Controller
 
                 $grid->company('회사명')->sortable();
                 $grid->name('성명')->sortable();
-                //$grid->main_phone('대표전화')->sortable();
-                //$grid->email()->sortable();
 
 
                 $grid->actions(function ($actions) {
@@ -225,22 +227,35 @@ class CustomerController extends Controller
 
                 $grid->filter(function (Grid\Filter $filter) {
                     $filter->equal('category_customer_id', '고객분류')->select(Category::selectOptionsIns(1));
-                    $filter->equal('category_sales_id', '영업분류')->select(Category::selectOptionsIns(2));
-                    $filter->equal('category_delivery_id', '납품분류')->select(Category::selectOptionsIns(3));
+                    //$filter->equal('category_sales_id', '영업분류')->select(Category::selectOptionsIns(2));
+                    //$filter->equal('category_delivery_id', '납품분류')->select(Category::selectOptionsIns(3));
                     $filter->like('company', '회사명');
-                    $filter->like('name', '성명');
-                    $filter->like('email', '이메일');
+                    $filter->like('name', '고객명');
+                    //$filter->like('email', '이메일');
                     $filter->like('manager', '담당자');
+                    $filter->like('phone_number', '휴대폰');
+
+                    $filter->like('address1', '주소');
+
+
+//                    $filter->where(function ($query) {
+//
+//                        $query->where('address1', 'like', "%{$_REQUEST['address']}%")
+//                            ->orWhere('address2', 'like', "%{$_REQUEST['address']}%");
+//
+//                    }, '주소');
+
+                    $filter->between('created_at', '등록일')->datetime();
 
 
                     $filter->where(function ($query) {
 
-                        $query->where('address1', 'like', "%{$this->input}%")
-                            ->orWhere('address2', 'like', "%{$this->input}%");
+                        $query->whereHas('sales', function ($query) {
+                            $query->where('noCollectPrice', '>', 0);
+                        });
 
-                    }, '주소');
+                    }, 'sales');
 
-                    $filter->between('created_at', '등록일')->datetime();
 
                 });
 
