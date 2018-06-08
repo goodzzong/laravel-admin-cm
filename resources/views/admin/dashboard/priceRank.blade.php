@@ -7,6 +7,49 @@
   <!-- /.box-header -->
   <div class="box-body table-responsive no-padding">
 
+    <div style="padding-left: 10px;" >
+      @php
+        if (isset($_REQUEST['month']) && $_REQUEST['month'] == 1) {
+      @endphp
+      <a class="btn btn-primary" href="/admin?month=1"
+         role="button">
+      @php
+        } else if (isset($_REQUEST['month']) && $_REQUEST['month'] == 2) {
+      @endphp
+        <a class="btn btn-default" href="/admin?month=1"
+           role="button">
+      @php
+        }else {
+      @endphp
+          <a class="btn btn-default" href="/admin?month=1"
+             role="button">
+      @php
+        }
+      @endphp
+
+       <?=date('Y')?> 년 전체</a>
+
+      @php
+        if (isset($_REQUEST['month']) && $_REQUEST['month'] == 1) {
+      @endphp
+        <a class="btn btn-default" href="/admin?month=2"
+        role="button">
+      @php
+        } else if (isset($_REQUEST['month']) && $_REQUEST['month'] == 2) {
+      @endphp
+        <a class="btn btn-primary" href="/admin?month=2"
+        role="button">
+      @php
+        }else {
+      @endphp
+       <a class="btn btn-default" href="/admin?month=2"
+       role="button">
+      @php
+        }
+      @endphp
+
+        이번달 </a>
+    </div>
     <canvas id="bar-chart" width="800" height="450"></canvas>
 
   </div>
@@ -23,7 +66,7 @@
         $string .= "," . str_replace(","," ",number_format($test[$i]));
       }
   }
-  echo $string;
+
 @endphp
 
 <script>
@@ -45,7 +88,9 @@
         backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
         borderColor: window.chartColors.blue,
         borderWidth: 1,
-        data: collectPrice
+        data: collectPrice,
+
+
       }, {
         label: '미수금액',
         backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
@@ -73,6 +118,7 @@
       }
     });
   });
+
 
   function comma(str) {
     str = String(str);

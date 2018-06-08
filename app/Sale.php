@@ -33,7 +33,10 @@ class Sale extends Model
         'noCollectPrice',
         'tax',
         'attach_sales_file',
-        'sales_at'
+        'sales_at',
+        'collectPrice1_date',
+        'collectPrice2_date',
+        'collectPrice3_date'
     ];
 
     public function customer()

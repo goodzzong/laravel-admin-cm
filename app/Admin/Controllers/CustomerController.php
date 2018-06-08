@@ -415,11 +415,24 @@ class CustomerController extends Controller
 
                     $form->currency('collectPrice1', '수금액(1차)')
                         ->symbol('₩');
+                    $form->datetime('collectPrice1_date', '수금액(1차) 처리일자')
+                        ->placeholder('날짜입력');
+
+                    $form->divider();
+
                     $form->currency('collectPrice2', '수금액(2차)')
                         ->symbol('₩');
+                    $form->datetime('collectPrice2_date', '수금액(2차) 처리일자')
+                        ->placeholder('날짜입력');
+
+                    $form->divider();
+
                     $form->currency('collectPrice3', '수금액(3차)')
                         ->symbol('₩');
+                    $form->datetime('collectPrice3_date', '수금액(3차) 처리일자')
+                        ->placeholder('날짜입력');
 
+                    $form->divider();
 
                     $form->currency('collectPriceAll', ' 총 수금액')
                         ->symbol('₩')
