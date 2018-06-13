@@ -19,6 +19,7 @@ class Customer extends Model implements Sortable
     protected $fillable = [
         'id',
         'user_id',
+        'm_id',
         'category_customer_id',
         'category_sales_id',
         'category_delivery_id',

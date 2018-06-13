@@ -56,6 +56,7 @@
 
   <!-- /.box-body -->
 </div>
+
 @php
   $test = explode(',',$noUsersCollectPrice);
   $string = "";
@@ -78,8 +79,8 @@
     var labelArray = "{{ $users }}";
     labelArray = labelArray.split(",");
     var collectPrice = [{{ $usersCollectPrice }}];
-    var noCollectPrice = [{{ $noUsersCollectPrice }}];
-
+    //var noCollectPrice = [{{ $noUsersCollectPrice }}];
+    var noCollectPrice = ['100000','20000000','30000000'];
 
     var barChartData = {
       labels: labelArray,
@@ -108,6 +109,33 @@
       data: barChartData,
       options: {
         responsive: true,
+
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              var value = data.datasets[0].data[tooltipItem.index];
+              if(parseInt(value) >= 1000){
+                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              } else {
+                return value;
+              }
+            }
+          } // end callbacks:
+        }, //end tooltips
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero:true,
+              callback: function(value, index, values) {
+                if(parseInt(value) >= 1000){
+                  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } else {
+                  return value;
+                }
+              }
+            }
+          }]
+        },
         legend: {
           position: 'top',
         },
@@ -118,11 +146,5 @@
       }
     });
   });
-
-
-  function comma(str) {
-    str = String(str);
-    return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
-  }
 
 </script>

@@ -274,6 +274,7 @@ class CustomerController extends Controller
 
                 $form->hidden('extra_info')->attribute(['class' => 'postcodify_extra_info'])->rules('nullable');
                 $form->hidden('user_id')->value(Admin::user()->id);
+                $form->hidden('m_id')->value(Admin::user()->id);
 
                 $form->select('category_customer_id', '고객사분류')->options(Category::selectOptionsIns(1))->rules('required', [
                     'required' => '그룹을 선택해 주세요.',
