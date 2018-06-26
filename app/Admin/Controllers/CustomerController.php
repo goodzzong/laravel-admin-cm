@@ -395,6 +395,8 @@ class CustomerController extends Controller
                 $form->hasMany('sales', '매출정보입력', function (Form\NestedForm $form) {
 
                     $form->hidden('user_id')->value(Admin::user()->id);
+                    $form->hidden('m_id')->value(Admin::user()->id);
+
                     $form->text('placeOfDelivery', '매출건명')
                         ->placeholder('매출건명을 입력해 주세요.');
                     $form->currency('price', '매출금액')

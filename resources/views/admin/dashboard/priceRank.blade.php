@@ -79,8 +79,8 @@
     var labelArray = "{{ $users }}";
     labelArray = labelArray.split(",");
     var collectPrice = [{{ $usersCollectPrice }}];
-    //var noCollectPrice = [{{ $noUsersCollectPrice }}];
-    var noCollectPrice = ['100000','20000000','30000000'];
+    var noCollectPrice = [{{ $noUsersCollectPrice }}];
+    //var noCollectPrice = ['100000','20000000','30000000'];
 
     var barChartData = {
       labels: labelArray,
@@ -113,7 +113,7 @@
         tooltips: {
           callbacks: {
             label: function(tooltipItem, data) {
-              var value = data.datasets[0].data[tooltipItem.index];
+              var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
               if(parseInt(value) >= 1000){
                 return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
               } else {
