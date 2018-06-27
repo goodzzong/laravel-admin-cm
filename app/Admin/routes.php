@@ -15,6 +15,8 @@ Route::group([
         'categories'           => CategoryController::class,
         'customers'            => CustomerController::class,
         'notices'              => NoticeController::class,
+        'business'             => BusinessController::class,
+        'free'                 => FreeController::class,
        // 'statistics/collect'   => CollectController::class,
     ]);
 
