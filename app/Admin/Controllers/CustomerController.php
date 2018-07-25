@@ -9,6 +9,8 @@ use App\Admin\Extensions\Tools\CustomerImportance;
 use App\Category;
 use App\Customer;
 use App\Sale;
+use App\User;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Search;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -18,6 +20,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
@@ -292,6 +295,16 @@ class CustomerController extends Controller
                     'required' => '그룹을 선택해 주세요.',
                 ]);
 
+
+                $form->select('user_id')->options(function ($id) {
+                    $user = User::find($id);
+
+                    if ($user) {
+                        return [$user->id => $user->name];
+                    }
+
+                })->ajax('/admin/api/users');
+
                 $form->text('manager', '영업담당자')
                     ->placeholder('담당자명을 입력해 주세요.')
                     ->setWidth(2)
@@ -486,6 +499,13 @@ class CustomerController extends Controller
     public function update($id)
     {
         return $this->form()->update($id);
+    }
+
+    public function users(Request $request)
+    {
+        $q = $request->get('q');
+
+        return User::where('name', 'like', "%$q%")->paginate(null, ['id', 'name as text']);
     }
 
 }

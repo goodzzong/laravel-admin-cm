@@ -1,0 +1,85 @@
+.form__new__comment .form-group,
+.list__comment .form-group {
+  width: 95%;
+  margin: auto;
+  margin-top: 1rem;
+}
+
+.form__new__comment div.text-right,
+.list__comment div.text-right {
+  margin: 10px auto;
+}
+
+
+.item__comment.top {
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 4px;
+  position: relative;
+  overflow: visible;
+  float: right;
+  width: 100%;
+  border: 1px solid #000000;
+}
+
+.media__edit__comment,
+.media__create__comment.sub {
+  display: none;
+}
+
+.form__new__comment .form-group,
+.list__comment .form-group {
+  width: 100%;
+  margin: auto;
+
+}
+
+.form__new__comment div.text-right,
+.list__comment div.text-right {
+  margin: 10px auto;
+}
+
+.content__comment p {
+  margin: 0;
+}
+
+.action__comment button,
+.action__comment span {
+  font-size: 0.72rem;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.action__comment button {
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+}
+
+.action__comment button:hover,
+.action__comment button:active,
+.action__comment button:focus {
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+
+.action__comment > span {
+  margin: 0 5px;
+}
+
+.img-thumbnail {
+  padding: 0.25rem;
+  background-color: #f5f8fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  max-width: 100%;
+  height: auto;
+  margin-right:1rem;
+}
+
+.media-body {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}

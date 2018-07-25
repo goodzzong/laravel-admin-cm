@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header">
 
-    <h3 class="box-title">자유게시판</h3>
+    <h3 class="box-title">A/S 요청게시판</h3>
 
   </div>
   <!-- /.box-header -->

@@ -19,6 +19,13 @@ class HomeController extends Controller
             $content->header('Dashboard');
             $content->description('Description...');
 
+            $content->row(function (Row $row) {
+
+                $row->column(12, function (Column $column) {
+                    $column->append(view(('welcome')));
+                });
+
+            });
             $content->row(Dashboard::title());
 
             $content->row(function (Row $row) {
@@ -35,6 +42,18 @@ class HomeController extends Controller
             $content->row(function (Row $row) {
 
                 $row->column(6, function (Column $column) {
+                    $column->append(Dashboard::business());
+                });
+
+                $row->column(6, function (Column $column) {
+                    $column->append(Dashboard::free());
+                });
+
+            });
+
+            $content->row(function (Row $row) {
+
+                $row->column(6, function (Column $column) {
                     $column->append(Dashboard::mycustomers());
                 });
 
@@ -44,17 +63,7 @@ class HomeController extends Controller
 
             });
 
-            $content->row(function (Row $row) {
 
-                $row->column(6, function (Column $column) {
-                    $column->append(Dashboard::business());
-                });
-
-                $row->column(6, function (Column $column) {
-                    $column->append(Dashboard::free());
-                });
-
-            });
 
         });
     }

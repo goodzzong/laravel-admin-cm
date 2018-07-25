@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header">
 
-    <h3 class="box-title">영업보고게시판</h3>
+    <h3 class="box-title">사전영업등록게시판</h3>
 
   </div>
   <!-- /.box-header -->

@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Business;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -22,7 +23,13 @@ class BusinessController extends Controller
             $content->header('영업보고게시판');
             $content->description('리스트');
 
-            $content->body($this->grid());
+            //$content->body($this->grid());
+
+            $businessList = Business::latest()->paginate(10);
+
+            $content->body(
+              view('admin.business.list',compact('businessList'))
+            );
         });
     }
 
@@ -45,17 +52,33 @@ class BusinessController extends Controller
             $content->description('등록');
 
             $content->body($this->form());
+//            $content->body(
+//              view('admin.business.create')
+//            );
         });
     }
 
-    public function show($id)
+    public function show(Business $business)
     {
-        return Admin::content(function (Content $content) use ($id) {
+
+
+        return Admin::content(function (Content $content) use ($business) {
+
+            $user = Admin::user();
+
+            $comments = $business->comments()
+                                ->with('replies')
+                                ->withTrashed()
+                                ->whereNull('parent_id')
+                                ->latest()
+                                ->get();
 
             $content->header('영업보고게시판');
             $content->description('보기');
-
-            $content->body($this->view()->view($id));
+            //$content->body($this->view()->view($id));
+            $content->body(
+                view('admin.business.show', compact('business', 'user', 'comments'))
+            );
         });
 
     }
@@ -67,26 +90,11 @@ class BusinessController extends Controller
             $grid->model()->ordered();
             $grid->id('ID')->sortable();
 
-//            $states = [
-//                'on' => ['value' => 1, 'text' => 'YES', 'color' => 'success'],
-//                'off' => ['value' => 2, 'text' => 'NO', 'color' => 'default'],
-//            ];
-
-//            $grid->released('공개여부')->switch($states);
-//            $grid->rank('순서')->orderable();
-
-            $grid->title('제목')->ucfirst()->limit(50)->editable();
+            $grid->title('제목')->ucfirst()->limit(50);
             $grid->content('내용')->ucfirst()->limit(50);
-//            $grid->attachFile('첨부파일')->display(function ($attachFile) {
-//                if ($attachFile) {
-//                    return '<i class="fa fa-file-text"></i>';
-//                } else {
-//                    return '';
-//                }
-//            });
 
             $grid->created_at('등록일');
-//            $grid->updated_at('수정일');
+
 
             $grid->filter(function (Grid\Filter $filter) {
 
@@ -114,6 +122,7 @@ class BusinessController extends Controller
 
             //$form->ckeditor('content');
             $form->editor('content', '내용');
+
 //            $form->textarea('content', '내용')->rules('required', [
 //                'required' => '내용을 입력해 주세요.',
 //            ]);
@@ -124,7 +133,7 @@ class BusinessController extends Controller
 //                'on' => ['value' => 1, 'text' => 'YES', 'color' => 'success'],
 //                'off' => ['value' => 2, 'text' => 'NO', 'color' => 'default'],
 //            ];
-//
+
 //            $form->switch('released', '공개여부')->states($states)->default(1);
             $form->display('created_at', '등록일');
             // $form->display('updated_at', '수정일');
@@ -135,8 +144,6 @@ class BusinessController extends Controller
 
     protected function view()
     {
-
-
         return Admin::form(Business::class, function (Form $form){
 
             $form->hidden('user_id')->value(Admin::user()->id);
@@ -153,13 +160,8 @@ class BusinessController extends Controller
 //            ]);
 //            $form->file('attachFile', '첨부파일');
 
-
-
-
             $form->display('created_at', '등록일');
             //$form->display('updated_at', '수정일');
-
-
         });
     }
 }

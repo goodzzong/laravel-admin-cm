@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,10 +16,20 @@ class Business extends Model implements Sortable
     protected $fillable = ['title', 'content', 'attachFile', 'user_id', 'rank', 'released'];
     protected $table = 'admin_business';
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'created_at', 'updated_at'];
 
     public $sortable = [
         'order_column_name' => 'rank',
         'sort_when_creating' => true,
     ];
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Administrator::class);
+    }
 }
