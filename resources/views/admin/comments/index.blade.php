@@ -30,7 +30,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
-    });
+    });1
 
     $('.btn__delete__comment').on('click', function (e) {
 
