@@ -28,7 +28,7 @@ class BusinessController extends Controller
             $businessList = Business::latest()->paginate(10);
 
             $content->body(
-              view('admin.business.list',compact('businessList'))
+                view('admin.business.list', compact('businessList'))
             );
         });
     }
@@ -66,18 +66,20 @@ class BusinessController extends Controller
 
             $user = Admin::user();
 
+            $modelName = "business";
+            $model = $business;
             $comments = $business->comments()
-                                ->with('replies')
-                                ->withTrashed()
-                                ->whereNull('parent_id')
-                                ->latest()
-                                ->get();
+                ->with('replies')
+                ->withTrashed()
+                ->whereNull('parent_id')
+                ->latest()
+                ->get();
 
             $content->header('영업보고게시판');
             $content->description('보기');
             //$content->body($this->view()->view($id));
             $content->body(
-                view('admin.business.show', compact('business', 'user', 'comments'))
+                view('admin.business.show', compact('model', 'user', 'comments', 'modelName'))
             );
         });
 
@@ -144,7 +146,7 @@ class BusinessController extends Controller
 
     protected function view()
     {
-        return Admin::form(Business::class, function (Form $form){
+        return Admin::form(Business::class, function (Form $form) {
 
             $form->hidden('user_id')->value(Admin::user()->id);
             $form->hidden('rank')->value(Business::count());

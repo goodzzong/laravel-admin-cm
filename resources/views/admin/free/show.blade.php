@@ -13,7 +13,7 @@
 
             @if( $currentUser->id === $model->user_id)
               <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href="http://myblog.local:8000/admin/business/{{$model->id}}/edit" class="btn btn-sm btn-primary"><i
+                <a href="http://myblog.local:8000/admin/free/{{$model->id}}/edit" class="btn btn-sm btn-primary"><i
                     class="fa fa-edit"></i>&nbsp;수정</a>
               </div>
             @endif
@@ -72,8 +72,6 @@
           </div>
           <!-- /.box-body -->
         </form>
-
-
         <div class="box-footer">
           <div class="col-md-2">
 

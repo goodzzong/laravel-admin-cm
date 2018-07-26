@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Business;
 use App\Comment;
+use App\Free;
 use App\Http\Requests\CommentsRequest;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
@@ -22,12 +23,14 @@ class CommentsController extends Controller
     {
         $comment->update($request->all());
 
-        return redirect(route('business.show', $comment->commentable->id) . '#comment_' . $comment->id);
+        $routeUrl = $comment->commentable_type == "App\Business" ? "business.show" : "free.show";
+
+        return redirect(route($routeUrl, $comment->commentable->id) . '#comment_' . $comment->id);
     }
 
     public function destroy(Comment $comment)
     {
-        if($comment->replies()->count() > 0) {
+        if ($comment->replies()->count() > 0) {
             $comment->delete();
         } else {
             $comment->forceDelete();
@@ -36,14 +39,25 @@ class CommentsController extends Controller
         return response()->json([], 204);
     }
 
-    public function store(CommentsRequest $request, Business $business)
+    public function store(CommentsRequest $request, $id)
     {
 
-        $comment = $business->comments()->create(array_merge(
-            $request->all(),
-            [ 'user_id' => Admin::user()->id ]
-        ));
+        if ($request->modelName == 'business') {
+            $comment = Business::find($id)->comments()->create(array_merge(
+                $request->all(),
+                ['user_id' => Admin::user()->id]
+            ));
+        } else {
+            $comment = Free::find($id)->comments()->create(array_merge(
+                $request->all(),
+                ['user_id' => Admin::user()->id]
+            ));
+        }
 
-        return redirect(route('business.show', $business->id) . '#comment_' . $comment->id);
+        $routeUrl = $comment->commentable_type == "App\Business" ? "business.show" : "free.show";
+
+        return redirect(route($routeUrl, $id) . '#comment_' . $comment->id);
     }
+
+
 }

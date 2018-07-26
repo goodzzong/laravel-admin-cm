@@ -22,7 +22,14 @@ class FreeController extends Controller
             $content->header('자유게시판');
             $content->description('리스트');
 
-            $content->body($this->grid());
+            //$content->body($this->grid());
+
+            $freeList = Free::latest()->paginate(10);
+
+            $content->body(
+                view('admin.free.list',compact('freeList'))
+            );
+
         });
     }
 
@@ -48,17 +55,33 @@ class FreeController extends Controller
         });
     }
 
-    public function show($id)
+    public function show(Free $free)
     {
-        return Admin::content(function (Content $content) use ($id) {
+        return Admin::content(function (Content $content) use ($free) {
+
+
+            $user = Admin::user();
+
+            $modelName = "free";
+            $model = $free;
+            $comments = $free->comments()
+                ->with('replies')
+                ->withTrashed()
+                ->whereNull('parent_id')
+                ->latest()
+                ->get();
 
             $content->header('자유게시판');
             $content->description('보기');
 
-            $content->body($this->view()->view($id));
+            //$content->body($this->view()->view($id));
+            $content->body(
+                view('admin.free.show', compact('model', 'user', 'comments','modelName'))
+            );
         });
 
     }
+
 
     protected function grid()
     {

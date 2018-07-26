@@ -21,6 +21,7 @@ Route::group([
     ]);
     $router->resource('comments', 'CommentsController', ['only' => ['update', 'destroy']]);
     $router->resource('business.comments', 'CommentsController', ['only' => 'store']);
+    $router->resource('free.comments', 'CommentsController', ['only' => 'store']);
 
     $router->get('/', 'HomeController@index');
     $router->get('customer/detail/{customerId}', 'CustomerController@detail')->name('customer.detail');
