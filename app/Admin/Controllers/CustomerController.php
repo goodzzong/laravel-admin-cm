@@ -10,7 +10,6 @@ use App\Category;
 use App\Customer;
 use App\Sale;
 use App\User;
-use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Search;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -20,8 +19,6 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 //use App\Admin\Extensions\ExcelExpoter;
@@ -125,7 +122,7 @@ class CustomerController extends Controller
                     return number_format($noCollectPrice);
                 });
 
-                $grid->created_at('등록일')->sortable();
+                $grid->updated_at('수정일')->sortable();
 
                 $grid->filter(function (Grid\Filter $filter) {
                     $filter->between('created_at', '등록일')->datetime();
@@ -140,7 +137,7 @@ class CustomerController extends Controller
 
                 //$grid->model()->userId(Admin::user());
 
-                $grid->model()->orderBy('id', 'desc');
+                $grid->model()->orderBy('updated_at', 'asc');
                 $grid->paginate(20);
 
                 $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
@@ -220,8 +217,8 @@ class CustomerController extends Controller
 
 
                 });
-
                 $grid->created_at('등록일')->sortable();
+                $grid->updated_at('수정일')->sortable();
                 $grid->tools(function ($tools) {
 
                     $tools->append(new CustomerImportance());
@@ -296,14 +293,14 @@ class CustomerController extends Controller
                 ]);
 
 
-                $form->select('user_id')->options(function ($id) {
-                    $user = User::find($id);
-
-                    if ($user) {
-                        return [$user->id => $user->name];
-                    }
-
-                })->ajax('/admin/api/users');
+//                $form->select('user_id')->options(function ($id) {
+//                    $user = User::find($id);
+//
+//                    if ($user) {
+//                        return [$user->id => $user->name];
+//                    }
+//
+//                })->ajax('/admin/api/users');
 
                 $form->text('manager', '영업담당자')
                     ->placeholder('담당자명을 입력해 주세요.')
@@ -396,7 +393,6 @@ class CustomerController extends Controller
                 $form->image('picture', '명함이미지')->removable()->rules('nullable');
 
                 $form->multipleFile('attach_files', '첨부파일')->rules('nullable')->removable();
-
 
 //                if (!Admin::user()->can('admin.customer.update')) {
 //                    $form->disableSubmit();

@@ -27,5 +27,10 @@ Route::group([
     $router->get('customer/detail/{customerId}', 'CustomerController@detail')->name('customer.detail');
     //$router->get('/info', 'HomeController@info');
     //$router->get('statistics/collect', 'CollectController@index');
-    //$router->get('api/users', 'CustomerController@users');
+    $router->get('api/users', 'CustomerController@users');
+
+    $router->get('sms','SmsController@index')->name('sms.show');
+    $router->post('sms','SmsController@store')->name('sms.store');
+
+
 });

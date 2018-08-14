@@ -39,10 +39,6 @@ class Customer extends Model implements Sortable
         'contents',
         'picture',
         'attach_files',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-
     ];
     public $sortable = [
         'order_column_name' => '',

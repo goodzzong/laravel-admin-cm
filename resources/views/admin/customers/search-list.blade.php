@@ -82,6 +82,8 @@
       <input type="checkbox" placeholder="미수금" name="eff2bf8779c7d16b31114be6a0e34743"
              value="ok" {{ isset($_REQUEST['eff2bf8779c7d16b31114be6a0e34743']) == 'ok'? 'checked':'' }}>
       <span style="padding-left:5px;">체크시 미수금이 있거나 등록되어 있는것만 검색됩니다.</span>
+
+      <button class="btn btn-primary btn-sm" id="sms-send">문제테스트</button>
     </td>
 
     <th class="text-center" style="background-color: #f1f1f1">주소(지역)</th>
@@ -151,6 +153,15 @@
       } else {
         $(this).closest('tr').css('background-color', '');
       }
+    });
+
+    $("#sms-send").click(function(e){
+      e.preventDefault();
+
+      var title = '문자 발송';
+      var status = "toolbar=no,directories=no,scrollbars=no,resizable=no,status=no,menubar=no,width=300, height=700, top=0,left=20";
+      window.open("/admin/sms", title,status);
+
     });
   });
 </script>

@@ -51,7 +51,9 @@
                 <a href="/admin/free/{{$free->id}}" class="btn btn-success btn-sm">보기</a>
               </td>
               <td class="text-center item__free" style="vertical-align: middle" data-id="{{$free->id }}">
-                <button class="btn btn-danger btn-sm button__delete">삭제</button>
+                @if( $currentUser->id === $free->user_id)
+                  <button class="btn btn-danger btn-sm button__delete">삭제</button>
+                @endif
               </td>
             </tr>
           @empty
@@ -88,13 +90,13 @@
   });
 
   $('.button__delete').on('click', function (e) {
-    var businessId = $(this).closest('.item__business').data('id');
+    var businessId = $(this).closest('.item__free').data('id');
     if (confirm('글을 삭제합니다.')) {
       $.ajax({
         type: 'DELETE',
         url: '/admin/free/' + businessId
       }).then(function () {
-        window.location.href = '/admin/business';
+        window.location.href = '/admin/free';
       });
     }
 
