@@ -94,7 +94,6 @@ class CustomerController extends Controller
 
             $content->body($this->form());
 
-
         });
     }
 
@@ -128,7 +127,6 @@ class CustomerController extends Controller
                     $filter->between('created_at', '등록일')->datetime();
                 });
 
-
             });
 
         } else {
@@ -137,7 +135,12 @@ class CustomerController extends Controller
 
                 //$grid->model()->userId(Admin::user());
 
-                $grid->model()->orderBy('updated_at', 'asc');
+                if (isset($_REQUEST['orderCheck']) && $_REQUEST['orderCheck'] == 'ok') {
+                    $grid->model()->orderBy('updated_at', 'asc');
+                } else {
+                    $grid->model()->orderBy('id', 'desc');
+                }
+
                 $grid->paginate(20);
 
                 $grid->model()->categoryCustomerId(Request::get('categoryCustomer'));
@@ -186,17 +189,16 @@ class CustomerController extends Controller
 //                if (!Admin::user()->can('admin.customer.update') || Admin::user()->id != $actions->row['user_id']) {
 //                    $actions->disableDelete();
 //                }
-
                     $actions->disableDelete();
                     $actions->disableEdit();
                     $actions->append(new CheckRow($actions->getKey()));
                     $actions->append('<a href="" 
                                          class="sms-send" 
-                                         data-id="'.$actions->getKey().'" 
-                                         data-phone="'.trim($actions->row->phone_number).'">
+                                         data-id="' . $actions->getKey() . '" 
+                                         data-phone="' . trim($actions->row->phone_number) . '">
                                          <i class="glyphicon glyphicon-phone" style="font-size:20px;"></i>
                                       </a>'
-                                    );
+                    );
 
                 });
 
@@ -243,7 +245,6 @@ class CustomerController extends Controller
                     $filter->like('phone_number', '휴대폰');
 
                     $filter->like('address1', '주소');
-
 
 //                    $filter->where(function ($query) {
 //

@@ -78,11 +78,12 @@
 
   <tr>
     <th class="text-center" style="background-color: #f1f1f1">미수금</th>
-    <td >
-      <input type="checkbox" placeholder="미수금" name="eff2bf8779c7d16b31114be6a0e34743"
-             value="ok" {{ isset($_REQUEST['eff2bf8779c7d16b31114be6a0e34743']) == 'ok'? 'checked':'' }}>
-      <span style="padding-left:5px;">체크시 미수금이 있거나 등록되어 있는것만 검색됩니다.</span>
-
+    <td>
+      <label for="noMoney">
+        <input type="checkbox" placeholder="미수금" name="c37d58aef6485bbb1df41dcb739cade0" id="noMoney"
+               value="ok" {{ isset($_REQUEST['c37d58aef6485bbb1df41dcb739cade0']) == 'ok'? 'checked':'' }}>
+        <span style="padding-left:5px;">체크시 미수금이 있거나 등록되어 있는것만 검색됩니다.</span>
+      </label>
 
     </td>
 
@@ -90,6 +91,17 @@
     <td>
       <input type="text" class="form-control" placeholder="휴대폰" name="address1"
              value="{{ isset($_REQUEST['address1'])? $_REQUEST['address1']:'' }}">
+    </td>
+  </tr>
+
+  <tr>
+    <th class="text-center" style="background-color: #f1f1f1"> 업데이트 체크</th>
+    <td colspan="3">
+      <label for="orderCheck">
+        <input type="checkbox" placeholder="미수금" name="orderCheck" id="orderCheck"
+               value="ok" {{ isset($_REQUEST['orderCheck']) == 'ok'? 'checked':'' }}>
+        <span style="padding-left:5px;">체크시 업데이트 늦은 순으로 정렬됩니다.</span>
+      </label>
     </td>
   </tr>
 
@@ -155,14 +167,14 @@
       }
     });
 
-    $(".sms-send").click(function(e){
+    $(".sms-send").click(function (e) {
       e.preventDefault();
 
       const idx = $(this).data('id');
-      const phone = $(this).data('phone').replace(/(\s*)/g,"");
+      const phone = $(this).data('phone').replace(/(\s*)/g, "");
       const title = '문자 발송';
       const status = "toolbar=no,directories=no,scrollbars=no,resizable=no,status=no,menubar=no,width=300, height=700, top=0,left=0";
-      window.open("/admin/sms?idx="+idx+"&phone="+phone, title,status);
+      window.open("/admin/sms?idx=" + idx + "&phone=" + phone, title, status);
 
     });
   });
