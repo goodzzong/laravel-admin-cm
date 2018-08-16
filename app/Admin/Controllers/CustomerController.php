@@ -171,7 +171,6 @@ class CustomerController extends Controller
                 });
 
                 $grid->manager('영업담당자')->sortable();
-
                 $grid->importance('고객중요도')->display(function ($importance) {
                     $html = "<i class='fa fa-star' style='color:#ff8913'></i>";
 
@@ -191,9 +190,15 @@ class CustomerController extends Controller
                     $actions->disableDelete();
                     $actions->disableEdit();
                     $actions->append(new CheckRow($actions->getKey()));
+                    $actions->append('<a href="" 
+                                         class="sms-send" 
+                                         data-id="'.$actions->getKey().'" 
+                                         data-phone="'.trim($actions->row->phone_number).'">
+                                         <i class="glyphicon glyphicon-phone" style="font-size:20px;"></i>
+                                      </a>'
+                                    );
 
                 });
-
 
                 $grid->sales('매출금 / 총수금액 / 총미수금')->display(function ($sales) {
                     $result_price = 0;
@@ -218,7 +223,9 @@ class CustomerController extends Controller
 
                 });
                 $grid->created_at('등록일')->sortable();
-                $grid->updated_at('수정일')->sortable();
+                //$grid->updated_at('수정일')->sortable();
+
+
                 $grid->tools(function ($tools) {
 
                     $tools->append(new CustomerImportance());

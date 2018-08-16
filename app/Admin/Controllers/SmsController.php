@@ -4,10 +4,12 @@ namespace App\Admin\Controllers;
 
 use App\Sms;
 
+
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Http\Request;
+use Encore\Admin\Facades\Admin;
 
 class SmsController extends Controller
 {
@@ -20,18 +22,32 @@ class SmsController extends Controller
      */
     public function index(Request $request)
     {
-        $msg = $request->input('msg');
-        return view('admin.sms.show',compact('msg'));
+
+        $request = $request->all();
+        $user = Admin::user()->id;
+
+        return view('admin.sms.show',compact('request','user'));
     }
 
     public function store(Request $request)
     {
         $receiveNumber = $request->input('receiveNumber');
+        $customer_id = $request->input('customer_id');
+
+        $sms = Sms::create([
+           'user_id' => $request->input('user_id'),
+           'customer_id' => $request->input('customer_id'),
+           'sendNumber' => $request->input('sendNumber'),
+           'receiveNumber' => $receiveNumber,
+           'content' => $request->input('messagebox')
+        ]);
+
+
         // 받는 사람   - 수신자 전화번호(생략불가)
         //           - 시스메이트 영업담당자 전화번호
         //           - 여러번호일 경우에는 ;으로 구분, 전화번호 구분자 대쉬(-)는 있거나 없거나 상관없음
         $stran_phone = $receiveNumber;
-        $stran_callback = '0264124900';                      // 보내는 사람 - 송신자 전화번호(생략가능) - 시스메이트 대표번호
+        $stran_callback = $request->input('sendNumber');                      // 보내는 사람 - 송신자 전화번호(생략가능) - 시스메이트 대표번호
         $stran_date = '';
         $stran_msg = $request->input('messagebox');
         $stran_msg = iconv('utf-8', 'euc-kr', $stran_msg);
@@ -53,6 +69,11 @@ class SmsController extends Controller
 
         }
 
-        return redirect(route('sms.show',compact('msg')));
+        return redirect(route('sms.show',
+            [
+                'msg' => $msg,
+                'idx' => $customer_id,
+                'phone' => $receiveNumber
+            ]));
     }
 }

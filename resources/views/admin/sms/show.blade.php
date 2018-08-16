@@ -73,10 +73,10 @@
   {!! csrf_field() !!}
   <!-- sms정보 -->
     <input type="hidden" name="action" value="go">
-    <input type="hidden" name="smsType" value="">
+    <input type="hidden" name="user_id" value="{{ $user ? $user : ''  }}">
     <!-- /sms정보 -->
-    <input type="hidden" name="rphone" value=""><!-- 받는사람 -->
-
+    <input type="hidden" name="sendNumber" value="{{ config('admin.sendNumber') }}">
+    <input type="hidden" name="customer_id" value="{{ isset($request['idx']) ? $request['idx'] : '' }}">
 
     <table class="table table-bordered">
       <colgroup>
@@ -105,7 +105,8 @@
       </tr>
       <tr>
         <td>
-          <input type="text" name="receiveNumber" class="form-control">
+          <input type="text" name="receiveNumber" class="form-control"
+                 value="{{ isset($request['phone']) ? $request['phone'] : '' }}">
         </td>
       </tr>
 
@@ -140,10 +141,10 @@
 <script type="text/javascript">
 
   @php
-    if ( isset($msg) ) {
+    if ( isset($request['msg']) ) {
   @endphp
 
-    alert("{{ $msg }}");
+  alert("{{ $request['msg'] }}");
 
   @php
     }
@@ -165,7 +166,7 @@
   }
 
   // textarea에 입력된 문자의 바이트 수를 체크
-  function checkByte(obj,maxByte) {
+  function checkByte(obj, maxByte) {
     var str = obj.value;
     var str_len = str.length;
 
@@ -174,25 +175,25 @@
     var one_char = "";
     var str2 = "";
 
-    for(var i=0; i<str_len; i++){
+    for (var i = 0; i < str_len; i++) {
       one_char = str.charAt(i);
-      if(escape(one_char).length > 4){
+      if (escape(one_char).length > 4) {
         rbyte += 2;                                         //한글2Byte
-      }else{
+      } else {
         rbyte++;                                            //영문 등 나머지 1Byte
       }
 
-      if(rbyte <= maxByte){
-        rlen = i+1;                                          //return할 문자열 갯수
+      if (rbyte <= maxByte) {
+        rlen = i + 1;                                          //return할 문자열 갯수
       }
     }
 
-    if(rbyte > maxByte){
-      alert("한글 "+(maxByte/2)+"자 / 영문 "+maxByte+"자를 초과 입력할 수 없습니다.");
-      str2 = str.substr(0,rlen);                                  //문자열 자르기
+    if (rbyte > maxByte) {
+      alert("한글 " + (maxByte / 2) + "자 / 영문 " + maxByte + "자를 초과 입력할 수 없습니다.");
+      str2 = str.substr(0, rlen);                                  //문자열 자르기
       obj.value = str2;
       checkByte(obj, maxByte);
-    }else{
+    } else {
       document.getElementById('byteInfo').innerText = rbyte;
     }
 
